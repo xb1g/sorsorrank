@@ -175,6 +175,17 @@ Required mitigations:
 - XSS escaping for roster text.
 - Short raw-event retention.
 - Copy regression tests for banned terms.
+- Legal-review gate before public rankings.
+- Active-candidate election-window gate.
+- No Google-click tracking in MVP.
+- Separate infrastructure/security logs from political interaction analytics.
+
+Compliance blockers:
+
+- Public rankings stay off until counsel approves the exact launch.
+- Active candidates stay out of public ranks during election windows by default.
+- Paid or targeted growth stays off until counsel approves it.
+- Freeze mode is a launch blocker, not a later enhancement.
 
 ## Test Plan
 
@@ -228,10 +239,11 @@ Backend:
 2. Deploy database schema with RLS.
 3. Deploy serverless functions.
 4. Seed small roster.
-5. Enable private alpha.
-6. Verify retention cleanup and aggregate correctness.
-7. Enable share cards.
-8. Enable public rankings after sample threshold.
+5. Enable private alpha with public rankings off and no active candidates.
+6. Verify consent, withdrawal, retention cleanup, and aggregate correctness.
+7. Enable neutral completion share cards only.
+8. Complete legal, roster, vendor, and election-window review.
+9. Enable public rankings after sample threshold and counsel approval.
 ```
 
 Rollback:
