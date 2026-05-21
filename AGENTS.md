@@ -12,6 +12,7 @@ Read these docs before product, design, or implementation work:
 - `docs/product/03-frontend-handoff.md`
 - `docs/product/04-safety-compliance.md`
 - `docs/product/05-technical-plan.md`
+- `docs/product/06-eng-review-static-architecture.md`
 
 ## Product Direction
 
@@ -138,6 +139,17 @@ Avoid:
 - Dark-pattern streak pressure.
 
 Every user-facing screen needs loading, empty, error, success, offline/slow-network, long-name, and small-mobile states.
+
+Preferred stack direction:
+
+- Static-hosted frontend.
+- Vite build.
+- Preact or vanilla TypeScript.
+- Plain CSS/CSS modules.
+- CSS transitions/Web Animations API or one small motion helper.
+- No Next.js, SSR, server components, or heavyweight routing unless a future requirement genuinely needs it.
+
+The app can be hosted as static files, but the product cannot be pure static if it needs real daily limits, aggregate ranks, abuse controls, retention cleanup, and admin roster updates. Use a small serverless/BaaS API for dynamic behavior.
 
 ## Data and Architecture
 

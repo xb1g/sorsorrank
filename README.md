@@ -10,3 +10,4 @@ Start with the product docs:
 - [Frontend Handoff](docs/product/03-frontend-handoff.md)
 - [Safety and Thai-Law Guardrails](docs/product/04-safety-compliance.md)
 - [Technical Plan](docs/product/05-technical-plan.md)
+- [Engineering Review: Static Mobile Architecture](docs/product/06-eng-review-static-architecture.md)

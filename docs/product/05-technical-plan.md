@@ -1,6 +1,23 @@
 # Technical Plan
 
-This is implementation guidance, not a final framework choice. The repo is currently greenfield, so the first engineering plan should choose the stack and map these concepts into concrete files.
+This is implementation guidance for a static-hosted, mobile-first app. The frontend should stay lightweight: Vite static build, Preact or vanilla TypeScript, no Next.js/SSR requirement. Dynamic behavior lives behind a small serverless/BaaS API.
+
+Pure static hosting alone is not enough for real daily limits, aggregate rankings, abuse prevention, takedown intake, or admin roster controls. The recommended shape is:
+
+```text
+static mobile frontend
+  -> tiny serverless/BaaS API
+  -> database + retention cleanup
+```
+
+Recommended default stack:
+
+- Frontend: Vite + Preact or vanilla TypeScript.
+- Hosting: static hosting/CDN.
+- Backend: Supabase Edge Functions plus Postgres/RLS, or Cloudflare Pages Functions plus D1/KV.
+- First recommendation: Supabase, because the product needs relational aggregates, retention jobs, and simple admin data sooner than it needs global edge coordination.
+
+Do not expose direct client writes to sensitive tables. Put swipe recording, rate limiting, and aggregate updates behind server-side functions.
 
 ## Core Objects
 
@@ -120,6 +137,17 @@ Suggested routes:
 - `POST /admin/roster` - create/update roster entries.
 - `POST /admin/freeze` - toggle freeze mode.
 
+For static hosting, `GET` routes can be client-side routes served by the static app. Mutations should map to serverless functions:
+
+- `accept-consent`
+- `get-deck`
+- `record-swipe`
+- `get-rankings`
+- `create-share`
+- `submit-contact`
+- `admin-roster`
+- `admin-freeze`
+
 ## Data Flow
 
 ```
@@ -227,3 +255,13 @@ Security tests:
 4. Add methodology/contact pages.
 5. Enable public rank only after threshold and review.
 6. Keep freeze mode ready before any larger public launch.
+
+## Architecture Decision
+
+Chosen direction: **static frontend plus serverless/BaaS backend**.
+
+Rejected:
+
+- Pure static only: cannot safely store aggregates or enforce daily limits.
+- Next.js full-stack app: heavier than needed for this product and not required for static hosting.
+- Direct frontend-to-database writes for swipes: too easy to abuse and too risky for sensitive political interaction data.

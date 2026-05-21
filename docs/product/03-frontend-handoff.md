@@ -10,6 +10,8 @@ This doc is for the frontend build. The vibe should be fun, quick, and social, b
 - Group-chat friendly.
 - Calm enough for politics.
 - More "daily challenge" than "dating game."
+- Lightweight enough to host as static files.
+- Animated and tactile without a bulky app framework.
 
 Avoid hearts, flame icons, red/green judgment colors, "hot/not," "match," "crush," or anything that turns public figures into romantic/sexual objects.
 
@@ -133,10 +135,25 @@ Required:
 Suggested direction:
 
 - Clean high-contrast interface.
-- A little playful motion, not cartoon politics.
+- Playful motion: springy card drag, snap-away decisions, progress ticks, completion burst.
 - Cards can feel tactile, but page chrome should be minimal.
 - Typography should be readable under Thai and English names.
 - Keep buttons large enough for mobile thumbs.
+- Prefer CSS transitions/Web Animations API or a tiny animation helper over heavy UI frameworks.
+- Respect reduced-motion settings.
+- Keep initial JavaScript small; the first screen should feel instant on mobile data.
+
+## Static Frontend Stack Direction
+
+Preferred frontend shape:
+
+- Vite static build.
+- Preact or vanilla TypeScript.
+- CSS modules/plain CSS.
+- Web Animations API or a small motion helper.
+- No Next.js, SSR, server components, or heavyweight routing.
+
+The frontend should be deployable to static hosting such as Cloudflare Pages, Netlify, GitHub Pages, or any CDN that serves built files.
 
 ## State Checklist
 

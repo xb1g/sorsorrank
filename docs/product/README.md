@@ -9,6 +9,7 @@ These docs are split by job:
 3. [Frontend Handoff](03-frontend-handoff.md) - screens, states, copy, and interaction notes for the frontend build.
 4. [Safety and Thai-Law Guardrails](04-safety-compliance.md) - non-negotiable boundaries for Thailand launch.
 5. [Technical Plan](05-technical-plan.md) - data model, API shape, retention, rollout, and tests.
+6. [Engineering Review: Static Mobile Architecture](06-eng-review-static-architecture.md) - stack decision, failure modes, and execution plan.
 
 Core decision: use the lightweight viral product shape, but keep the strongest compliance controls from the heavier plan.
 
