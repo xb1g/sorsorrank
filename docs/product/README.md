@@ -12,6 +12,8 @@ These docs are split by job:
 6. [Engineering Review: Static Mobile Architecture](06-eng-review-static-architecture.md) - stack decision, failure modes, and execution plan.
 7. [Legal Risk Hardening Review](07-legal-risk-hardening.md) - critical launch blockers and conservative compliance defaults.
 8. [PDPA Privacy Notice and Consent Draft](08-pdpa-privacy-notice.md) - user-facing PDPA copy and implementation requirements.
+9. [Frontend Design Doc](07-frontend-design-doc.md) - product-register design system, screen flow, components, states, and current UI corrections.
+10. [Backend Implementation Note](08-backend-implementation.md) - Supabase schema, Edge Functions, ranking, retention, and admin safety choices.
 
 Core decision: use the lightweight viral product shape, but keep the strongest compliance controls from the heavier plan.
 

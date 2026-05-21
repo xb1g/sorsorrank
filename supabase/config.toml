@@ -406,3 +406,30 @@ s3_secret_key = "env(S3_SECRET_KEY)"
 # declarative_schema_path = "./database"
 # JSON string passed through to pg-delta SQL formatting.
 # format_options = "{\"keywordCase\":\"upper\",\"indent\":2,\"maxWidth\":80,\"commaStyle\":\"trailing\"}"
+
+[functions.accept-consent]
+verify_jwt = false
+
+[functions.get-deck]
+verify_jwt = false
+
+[functions.record-swipe]
+verify_jwt = false
+
+[functions.get-rankings]
+verify_jwt = false
+
+[functions.create-share]
+verify_jwt = false
+
+[functions.submit-contact]
+verify_jwt = false
+
+[functions.admin-roster]
+verify_jwt = false
+
+[functions.admin-freeze]
+verify_jwt = false
+
+[functions.cleanup-retention]
+verify_jwt = false
