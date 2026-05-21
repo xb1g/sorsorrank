@@ -60,7 +60,7 @@ Copy options:
 
 - "Today's Research Interest Rank"
 - "Who are people researching today?"
-- "Aggregate curiosity, not vote intent."
+- "Aggregate curiosity, not a poll."
 
 Required elements:
 
@@ -73,7 +73,7 @@ Required elements:
 
 Light prompt after completion:
 
-- "Send this to one friend who always has political takes."
+- "Send this to one friend who follows public affairs."
 - "Make your group chat do the 10."
 - "Compare curiosity, not conclusions."
 
@@ -103,6 +103,9 @@ Do not build:
 - Comment wars.
 - Quote posts attached to politicians.
 - Paid boosts.
+- Paid or unpaid influencer seeding tied to an active election.
+- Targeted ads based on location, inferred politics, demographics, or public-figure interest.
+- Candidate, party, campaign, PAC, or proxy coordination.
 - Campaign pages.
 - AI-generated roasts, praise, summaries, allegations, or memes.
 
@@ -114,21 +117,28 @@ Do not build:
 - Invite: friends only.
 - Goal: test completion, share, and confusion rate.
 - Watch: whether people misread the rank as voting support.
+- Public ranks: off.
+- Active candidates: excluded unless counsel explicitly approves.
 
 ### Public Soft Launch
 
+- Requires Thai counsel approval of exact copy, flow, roster, privacy notice, methodology, vendors, and timing.
+- Do not launch during a covered election window.
 - Add methodology page before public ranking.
 - Enable share cards.
 - Keep rank labels conservative.
 - Add takedown/contact link in footer.
 - Monitor copy screenshots people share on social media.
+- Stop public ranking if screenshots or user behavior frame the product as support, opposition, voting advice, or campaign momentum.
 
 ### Viral Push
 
+- Only after soft-launch safety metrics are acceptable and no active election freeze applies.
 - Launch with the "Do your 10" challenge.
 - Seed group chats and friend circles.
 - Share only completion cards and rank snapshots.
 - Avoid candidate-specific promotion.
+- Do not buy traffic, boost posts, or compensate creators during election-sensitive periods.
 
 ## North Star
 

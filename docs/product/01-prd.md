@@ -29,10 +29,12 @@ Most civic products feel like homework. SorsorRank should feel like a daily soci
 - Public aggregate **Research Interest Rank**.
 - Shareable completion card after 10 swipes.
 - Consent/privacy gate before storing swipe actions.
+- Explicit withdrawal/deletion path for stored interaction data.
 - Methodology page explaining what the rank means and does not mean.
 - Takedown/contact page.
 - Admin-managed roster.
 - Freeze mode for legally sensitive periods.
+- Counsel-approved launch gate before public rankings or active-candidate coverage.
 
 ### Should Have
 
@@ -51,6 +53,9 @@ Most civic products feel like homework. SorsorRank should feel like a daily soci
 - AI summaries of search results.
 - Scraping Google results.
 - Campaign accounts, paid boosts, or candidate coordination.
+- Paid political promotion, influencer seeding, or targeted ads.
+- Public rankings for active candidates during an election window.
+- Google-click tracking as a ranking input.
 - Monarchy, royal family, or royal-institution content.
 
 ## Success Metrics
@@ -76,9 +81,12 @@ Rules:
 
 - `Research` means the user chose to research this public figure.
 - `Skip` counts as a card impression, not a positive signal.
-- Google click can be measured separately, but should not be required for ranking.
+- Google click can be measured separately only after separate consent and counsel review; in MVP it is client-only and never required for ranking.
 - Do not call the result popularity, support, approval, vote intent, or winning.
 - Hide ranks below the minimum sample threshold.
+- Default public threshold: hide any figure with fewer than 100 eligible consented card impressions in the ranking period, and let counsel raise this threshold.
+- Hide all active-candidate ranks during election windows unless Thai counsel approves the exact roster, copy, timing, and display.
+- Do not publish demographic, district-level, or micro-geographic breakdowns.
 
 ## Product Copy Principles
 
@@ -89,9 +97,9 @@ Use:
 - "Do your 10"
 - "Research Interest Rank"
 - "People chose to research..."
-- "Not a poll. Not voting advice."
+- "Not a poll. Not an endorsement."
 
-Avoid:
+Avoid in CTAs, share cards, rank labels, and promotional copy:
 
 - "Vote"
 - "Support"
@@ -103,10 +111,19 @@ Avoid:
 - "Match"
 - "Crush"
 
-## Open Decisions
+## Conservative Defaults And Open Decisions
+
+Defaults until legal review says otherwise:
+
+- Roster scope: public officeholders and public political figures who are not active candidates in a current election.
+- Active candidates: excluded from public rankings and share surfaces during election windows.
+- Public ranks: disabled in private alpha.
+- Raw swipe retention: 7 days maximum, separate from legally required infrastructure traffic logs if counsel says those apply.
+- Google Search clicks: client-only outbound behavior in MVP; do not store as political interaction data.
+
+Open decisions:
 
 - First language: Thai-only or bilingual.
-- Roster scope: public officeholders only, politicians broadly, or active candidates.
-- Minimum sample size before public ranking.
-- Raw event retention period. Recommended default: 7 days maximum.
-- Whether active candidates are hidden, frozen, or allowed after legal review.
+- Whether the product needs an age gate or parental-consent flow before any underage users are targeted.
+- Exact minimum sample size before public ranking.
+- Whether active candidates can ever be shown outside public rankings after legal review.

@@ -27,14 +27,21 @@ Primary copy:
 
 Required notes:
 
-- "This is not a poll, endorsement, prediction, or voting guide."
+- "This is not a poll, endorsement, or election forecast."
 - "We show names and link you to Google. We do not host political claims."
 - "Your swipes are used only for aggregate research-interest ranking."
+- "You can withdraw consent or ask us to delete stored interaction data."
 
 Actions:
 
 - `Start my 10`
 - `Read methodology`
+
+Rules:
+
+- Consent must be explicit and unbundled from marketing.
+- Do not store swipes, Google clicks, share events, or persistent visitor identifiers before consent.
+- If the user declines consent, allow methodology/contact access but no swiping.
 
 ### 2. Swipe Deck
 
@@ -51,6 +58,7 @@ Interaction notes:
 
 - Google button should be obvious and available before the user decides.
 - Card should not contain claims, photos with unclear rights, bios, accusations, promises, or editorial text.
+- Search query must be neutral: name plus optional role/party only. Do not append scandal, corruption, crime, praise, attack, or campaign terms.
 - Use stable layout for long names.
 - Support tap buttons even if swipe gestures exist.
 
@@ -75,7 +83,7 @@ Content:
 - Sample size.
 - List of ranked public figures.
 - Methodology link.
-- Disclaimer: "Aggregate curiosity, not vote intent."
+- Disclaimer: "Aggregate curiosity, not a poll."
 
 Ranking row:
 
@@ -84,6 +92,13 @@ Ranking row:
 - Optional role/party.
 - Research-interest score or simple bar.
 - Google Search button.
+
+Rules:
+
+- Hide ranks during freeze mode.
+- Hide active-candidate rows during election windows unless counsel has approved the exact release.
+- Hide rows below the minimum sample threshold.
+- Do not show demographic, district-level, or user-segment rankings.
 
 ### 5. Methodology
 
@@ -103,6 +118,8 @@ If enabled:
 - Rankings can be hidden or frozen.
 - Show message: "Research rankings are paused during a sensitive election period."
 - Keep methodology/contact pages accessible.
+- Disable rank snapshot sharing.
+- Disable public share previews for any active-candidate content.
 
 ## Share Cards
 
@@ -120,6 +137,7 @@ Do not include:
 - Names of researched/skipped people.
 - Political preference.
 - "Winning" language.
+- Active-candidate or election-window context.
 
 ### Rank Snapshot
 
@@ -129,6 +147,11 @@ Required:
 - Date range.
 - Sample size.
 - "Not a poll or endorsement."
+
+Rules:
+
+- Disabled during election freeze.
+- Disabled for active-candidate rosters.
 
 ## Visual Direction
 
@@ -179,7 +202,7 @@ Critical edge states:
 
 ## Banned UI Copy
 
-Do not use:
+Do not use in CTAs, share cards, rank labels, or promotional copy:
 
 - vote
 - support
