@@ -1,0 +1,24 @@
+{
+  "name": "sorsorrank-frontend",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "backend:check": "tsc -p tsconfig.backend.json --noEmit",
+    "test:backend": "node --test --import tsx backend/core/__tests__/*.test.ts",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "preact": "^10.26.9"
+  },
+  "devDependencies": {
+    "@preact/preset-vite": "^2.10.2",
+    "@types/node": "^25.9.1",
+    "playwright-core": "^1.60.0",
+    "tsx": "^4.22.3",
+    "typescript": "^5.9.2",
+    "vite": "^7.1.3"
+  }
+}
