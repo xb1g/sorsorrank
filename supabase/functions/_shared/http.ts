@@ -1,7 +1,12 @@
+const allowedOrigins = (Deno.env.get("PUBLIC_APP_ORIGIN") ?? "")
+  .split(",")
+  .map((origin) => origin.trim())
+  .filter(Boolean);
+
 export const corsHeaders = {
-  "Access-Control-Allow-Origin": Deno.env.get("PUBLIC_APP_ORIGIN") ?? "*",
-  ...(Deno.env.get("PUBLIC_APP_ORIGIN") ? { "Access-Control-Allow-Credentials": "true" } : {}),
-  "Access-Control-Allow-Headers": "authorization, content-type",
+  "Access-Control-Allow-Origin": allowedOrigins.length === 1 ? allowedOrigins[0] : "*",
+  ...(allowedOrigins.length === 1 ? { "Access-Control-Allow-Credentials": "true" } : {}),
+  "Access-Control-Allow-Headers": "apikey, authorization, content-type",
   "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
   "Vary": "Origin"
 };

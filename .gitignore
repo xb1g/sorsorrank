@@ -2,6 +2,16 @@ node_modules/
 dist/
 dist-backend/
 tmp-screens/
+.env.local
+.env.*.local
+.supabase-secrets.generated.env
+supabase/.temp/
+tmp-*.log
+tmp-*.sql
+.gstack-preview*.log
 *.tsbuildinfo
 vite.config.js
 vite.config.d.ts
+
+.vercel
+.gstack/

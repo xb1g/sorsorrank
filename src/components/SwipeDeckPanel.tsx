@@ -13,6 +13,14 @@ const effectMap: Record<SwipeAction, string[]> = {
   skip: ["amber", "amber", "rose", "amber", "rose", "amber", "amber"]
 };
 
+function getInitials(displayName: string) {
+  return displayName
+    .split(" ")
+    .slice(0, 2)
+    .map((segment) => segment[0])
+    .join("");
+}
+
 export function SwipeDeckPanel({
   deckState,
   onSwipe,
@@ -20,13 +28,17 @@ export function SwipeDeckPanel({
 }: SwipeDeckPanelProps) {
   const [activeIndex, setActiveIndex] = useState(0);
   const [isBusy, setIsBusy] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
   const [lastAction, setLastAction] = useState<SwipeAction | null>(null);
+  const [failedImageIds, setFailedImageIds] = useState<Set<string>>(() => new Set());
 
   const activeCard = deckState.cards[activeIndex];
-  const remaining = Math.max(deckState.dailyLimit - activeIndex, 0);
-  const progressLabel = `${Math.min(activeIndex + 1, deckState.dailyLimit)}/${deckState.dailyLimit}`;
-  const completion = Math.min((activeIndex / deckState.dailyLimit) * 100, 100);
+  const completedCount = Math.min(deckState.usedToday + activeIndex, deckState.dailyLimit);
+  const remaining = Math.max(deckState.remaining - activeIndex, 0);
+  const progressLabel = `${Math.min(completedCount + 1, deckState.dailyLimit)}/${deckState.dailyLimit}`;
+  const completion = Math.min((completedCount / deckState.dailyLimit) * 100, 100);
   const bubbles = useMemo(() => (lastAction ? effectMap[lastAction] : []), [lastAction]);
+  const showImage = Boolean(activeCard?.imageUrl && !failedImageIds.has(activeCard.id));
 
   async function handleSwipe(action: SwipeAction) {
     if (!activeCard || isBusy) {
@@ -35,7 +47,16 @@ export function SwipeDeckPanel({
 
     setIsBusy(true);
     setLastAction(action);
-    await onSwipe(activeCard, action);
+    setErrorMessage("");
+
+    try {
+      await onSwipe(activeCard, action);
+    } catch (error) {
+      setIsBusy(false);
+      setLastAction(null);
+      setErrorMessage(error instanceof Error ? error.message : "This action could not be recorded.");
+      return;
+    }
 
     window.setTimeout(() => {
       const nextIndex = activeIndex + 1;
@@ -50,7 +71,20 @@ export function SwipeDeckPanel({
   }
 
   if (!activeCard) {
-    return null;
+    return (
+      <section class="panel state-panel">
+        <p class="panel-label">{deckState.freezeMode ? "Paused" : "Daily deck"}</p>
+        <h2>{deckState.doneToday ? "You did your 10." : "No cards in the deck"}</h2>
+        <p>
+          {deckState.freezeMode
+            ? "Aggregate rank is hidden during review mode."
+            : deckState.message ??
+              (deckState.doneToday
+                ? "Come back tomorrow for another daily deck."
+                : "The active roster is empty right now.")}
+        </p>
+      </section>
+    );
   }
 
   return (
@@ -87,20 +121,29 @@ export function SwipeDeckPanel({
           <div class="portrait-shell">
             <div class="portrait-glow" />
             <div class="portrait-card">
-              <div class="portrait-avatar">
-                {activeCard.displayName
-                  .split(" ")
-                  .slice(0, 2)
-                  .map((segment) => segment[0])
-                  .join("")}
-              </div>
-              <div class="portrait-chart">
-                <div />
-                <div />
-                <div />
-                <div />
-                <div />
-              </div>
+              {showImage ? (
+                <img
+                  class="portrait-image"
+                  src={activeCard.imageUrl}
+                  alt=""
+                  loading="eager"
+                  referrerPolicy="no-referrer"
+                  onError={() => {
+                    setFailedImageIds((current) => new Set(current).add(activeCard.id));
+                  }}
+                />
+              ) : (
+                <div class="portrait-avatar">{getInitials(activeCard.displayName)}</div>
+              )}
+              {!showImage ? (
+                <div class="portrait-chart">
+                  <div />
+                  <div />
+                  <div />
+                  <div />
+                  <div />
+                </div>
+              ) : null}
             </div>
           </div>
 
@@ -110,7 +153,7 @@ export function SwipeDeckPanel({
               <h3>{activeCard.displayName}</h3>
               <p class="role-line">
                 {activeCard.roleLabel}
-                {activeCard.partyLabel ? ` · ${activeCard.partyLabel}` : ""}
+                {activeCard.partyLabel ? ` - ${activeCard.partyLabel}` : ""}
               </p>
             </div>
 
@@ -132,7 +175,7 @@ export function SwipeDeckPanel({
                 onClick={() => handleSwipe("research")}
                 disabled={isBusy}
               >
-                Approve
+                Research
               </button>
               <button
                 class="deck-button deck-button-skip"
@@ -140,9 +183,10 @@ export function SwipeDeckPanel({
                 onClick={() => handleSwipe("skip")}
                 disabled={isBusy}
               >
-                Disapprove
+                Skip
               </button>
             </div>
+            {errorMessage ? <p class="inline-error">{errorMessage}</p> : null}
           </div>
         </article>
       </div>

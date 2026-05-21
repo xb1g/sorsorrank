@@ -12,9 +12,9 @@ import {
 import { getOrCreateVisitorIdentity } from "../_shared/visitorToken.ts";
 
 const shareCopy = {
-  completion: "I researched 10 public figures today. Your turn.",
+  completion: "I did my 10 on SorsorRank. Your turn.",
   streak: "I kept up with my 10.",
-  rank_snapshot: "Today's Research Interest Rank"
+  rank_snapshot: "Today's SorsorRank Research Interest Rank"
 };
 
 Deno.serve(async (request) => {

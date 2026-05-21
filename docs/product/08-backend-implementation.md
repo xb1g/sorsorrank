@@ -60,11 +60,11 @@ Rows below `minimum_ranking_sample_size` are hidden from the public ranking resp
 
 ## Privacy And Retention
 
-Visitors use server-signed visitor tokens. The client can hold the token, but cannot mint arbitrary visitor IDs without `VISITOR_SIGNING_SECRET`.
+Visitors use Supabase Auth anonymous sessions when `VITE_SUPABASE_PUBLISHABLE_KEY` is configured. They can optionally create or sign in to an email/password Supabase account, but consent, deck, and swipe writes still go only through Edge Functions. Edge Functions verify the Supabase Auth JWT and hash the Supabase user ID before writing app data. The older server-signed visitor token remains as a fallback for local or legacy deployments.
 
 New visitor-token minting requires a server-verified human challenge. The implementation expects Cloudflare Turnstile by default through `TURNSTILE_SECRET_KEY`. If the challenge secret is missing, public token minting fails closed.
 
-Visitor IDs are hashed with `VISITOR_HASH_SALT` before storage. The backend does not store raw IP addresses in analytics tables. Abuse rate-limit keys are derived from request metadata with `ABUSE_HASH_SALT` and stored only as short-retention hashes. Pre-mint abuse limits are deliberately tighter than post-token request limits so one source cannot push a public figure over the sample threshold by minting many visitors.
+Visitor IDs are hashed with `VISITOR_HASH_SALT` before storage. The backend does not store raw IP addresses in analytics tables. Abuse rate-limit keys are derived from request metadata with `ABUSE_HASH_SALT` and stored only as short-retention hashes. Pre-mint abuse limits are deliberately tighter than post-token request limits so one source cannot push a public figure over the sample threshold by minting many fallback visitor tokens. Supabase Auth sessions skip that fallback pre-mint limit and rely on Supabase Auth controls plus per-visitor function limits.
 
 Raw swipe events and issued card impressions are intended for short retention only. `cleanup-retention` caps the raw event retention window at 7 days even if the environment variable is misconfigured higher.
 

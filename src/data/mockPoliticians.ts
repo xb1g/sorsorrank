@@ -61,22 +61,6 @@ function createSparkline(index: number) {
   });
 }
 
-function createApproveTrend(index: number) {
-  return Array.from({ length: 12 }, (_, pointIndex) => {
-    const base = 58 - index * 0.42;
-    const step = ((pointIndex * 5 + index * 3) % 9) - 4;
-    const wave = Math.sin((pointIndex + index) / 2.2) * 2.8;
-    return Number(Math.max(21, Math.min(79, base + step + wave)).toFixed(1));
-  });
-}
-
-function createDisapproveTrend(approveTrend: number[], index: number) {
-  return approveTrend.map((value, pointIndex) => {
-    const offset = ((pointIndex + index) % 4) - 1.5;
-    return Number(Math.max(18, Math.min(76, 100 - value + offset)).toFixed(1));
-  });
-}
-
 export const rankingSummary: RankingSummary = {
   generatedAt: "2026-05-20T08:30:00.000Z",
   sampleSize: 8421,
@@ -86,8 +70,6 @@ export const rankingSummary: RankingSummary = {
     const researchActions = Math.round(eligibleImpressions * (0.68 - index * 0.0063));
     const researchInterestScore = Number((researchActions / eligibleImpressions).toFixed(3));
     const sparkline = createSparkline(index);
-    const approveTrend = createApproveTrend(index);
-    const disapproveTrend = createDisapproveTrend(approveTrend, index);
 
     return {
       id,
@@ -99,9 +81,7 @@ export const rankingSummary: RankingSummary = {
       researchActions,
       eligibleImpressions,
       momentum: index % 2 === 0 ? 0.8 + index / 20 : -0.5 - index / 24,
-      sparkline,
-      approveTrend,
-      disapproveTrend
+      sparkline
     };
   })
 };

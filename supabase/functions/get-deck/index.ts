@@ -58,7 +58,7 @@ Deno.serve(async (request) => {
         usedToday: usedToday ?? 0,
         remaining: Math.max(dailyLimit - (usedToday ?? 0), 0),
         freezeMode: true,
-        message: "Research rankings are paused during a sensitive review period."
+        message: "The daily 10 is paused during a sensitive review period."
       });
     }
 
@@ -103,8 +103,9 @@ Deno.serve(async (request) => {
     const newCardsNeeded = Math.max(needed - (existingImpressions?.length ?? 0), 0);
     const { data: activePoliticians, error } = await supabase
       .from("politicians")
-      .select("id,display_name,role_label,party_label,search_query")
+      .select("id,display_name,role_label,party_label,search_query,image_url,image_source_url,info_source_url,featured_priority")
       .eq("status", "active")
+      .order("featured_priority", { ascending: true, nullsFirst: false })
       .order("updated_at", { ascending: false })
       .limit(dailyLimit * 3);
 
@@ -159,6 +160,10 @@ Deno.serve(async (request) => {
         roleLabel: politician.role_label,
         partyLabel: politician.party_label,
         searchQuery: politician.search_query,
+        imageUrl: politician.image_url,
+        imageSourceUrl: politician.image_source_url,
+        infoSourceUrl: politician.info_source_url,
+        featuredPriority: politician.featured_priority,
         impressionId: impressionByPoliticianId.get(politician.id)
       }));
 

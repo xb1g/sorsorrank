@@ -1,26 +1,28 @@
 import { useEffect, useState } from "preact/hooks";
 import { ConsentGate } from "./components/ConsentGate";
-import { ContactPanel } from "./components/ContactPanel";
 import { DailyDone } from "./components/DailyDone";
-import { MethodologyPanel } from "./components/MethodologyPanel";
 import { ResearchInterestRank } from "./components/ResearchInterestRank";
 import { SwipeDeckPanel } from "./components/SwipeDeckPanel";
 import {
   acceptConsent,
+  createCompletionShare,
   fetchConsentState,
   fetchDeckState,
   fetchRankingSummary,
+  getTurnstileSiteKey,
   recordSwipe
 } from "./services/api";
 import type { ConsentState, DeckCard, DeckState, RankingSummary, SwipeAction } from "./types";
 
-type AppView = "consent" | "deck" | "done" | "rankings" | "methodology" | "contact";
+type AppView = "consent" | "deck" | "done" | "rankings";
 
 function App() {
   const [rankingSummary, setRankingSummary] = useState<RankingSummary | null>(null);
   const [deckState, setDeckState] = useState<DeckState | null>(null);
   const [consentState, setConsentState] = useState<ConsentState | null>(null);
   const [status, setStatus] = useState<"loading" | "ready" | "error">("loading");
+  const [flowError, setFlowError] = useState("");
+  const [isAcceptingConsent, setIsAcceptingConsent] = useState(false);
   const [view, setView] = useState<AppView>("consent");
 
   useEffect(() => {
@@ -28,11 +30,11 @@ function App() {
 
     async function loadApp() {
       try {
-        const [rankingData, deckData, consentData] = await Promise.all([
+        const [rankingData, consentData] = await Promise.all([
           fetchRankingSummary(),
-          fetchDeckState(),
           fetchConsentState()
         ]);
+        const deckData = consentData.hasConsented ? await fetchDeckState() : null;
 
         if (!isMounted) {
           return;
@@ -41,7 +43,7 @@ function App() {
         setRankingSummary(rankingData);
         setDeckState(deckData);
         setConsentState(consentData);
-        setView(consentData.hasConsented ? "deck" : "consent");
+        setView(consentData.hasConsented ? (deckData?.doneToday ? "done" : "deck") : "consent");
         setStatus("ready");
       } catch (error) {
         console.error("Failed to load app state", error);
@@ -57,18 +59,51 @@ function App() {
     };
   }, []);
 
-  async function handleAcceptConsent() {
-    const nextConsent = await acceptConsent();
+  async function handleAuthChange() {
+    const nextConsent = await fetchConsentState();
     setConsentState(nextConsent);
-    setView("deck");
+
+    if (!nextConsent.hasConsented && view !== "rankings") {
+      setDeckState(null);
+      setView("consent");
+    }
+  }
+
+  async function handleAcceptConsent(humanChallengeToken?: string) {
+    setIsAcceptingConsent(true);
+    setFlowError("");
+
+    try {
+      const nextConsent = await acceptConsent(humanChallengeToken);
+      const nextDeck = await fetchDeckState();
+      setConsentState(nextConsent);
+      setDeckState(nextDeck);
+      setView(nextDeck.doneToday ? "done" : "deck");
+    } catch (error) {
+      setFlowError(error instanceof Error ? error.message : "Consent could not be recorded.");
+    } finally {
+      setIsAcceptingConsent(false);
+    }
   }
 
   async function handleSwipe(card: DeckCard, action: SwipeAction) {
-    await recordSwipe({
+    const result = await recordSwipe({
       politicianId: card.id,
       action,
       impressionId: card.impressionId,
       idempotencyKey: `${card.impressionId}-${action}`
+    });
+
+    setDeckState((current) => {
+      if (!current) {
+        return current;
+      }
+
+      return {
+        ...current,
+        usedToday: result.usedToday,
+        remaining: result.remaining
+      };
     });
   }
 
@@ -79,30 +114,16 @@ function App() {
           <div class="brand-mark">S</div>
           <div>
             <strong>SorsorRank</strong>
-            <span>Politician Leaderboard</span>
+            <span>Research Interest Rank</span>
           </div>
         </div>
         <nav class="topnav">
-          <button
-            class={`nav-chip ${view === "methodology" ? "is-active" : ""}`}
-            type="button"
-            onClick={() => setView("methodology")}
-          >
-            How it works
-          </button>
           <button
             class={`nav-chip ${view === "rankings" ? "is-active" : ""}`}
             type="button"
             onClick={() => setView("rankings")}
           >
-            Leaderboard
-          </button>
-          <button
-            class={`nav-chip ${view === "contact" ? "is-active" : ""}`}
-            type="button"
-            onClick={() => setView("contact")}
-          >
-            Reach us
+            Rank
           </button>
         </nav>
       </header>
@@ -110,31 +131,32 @@ function App() {
       <main class={view === "deck" || view === "consent" || view === "done" ? "focus-layout" : "content-layout"}>
         {status === "loading" ? (
           <section class="panel state-panel">
-            <h2>Loading the board</h2>
-            <p>Pulling in the deck, the stats, and the latest vibes.</p>
+            <h2>Loading today's research loop</h2>
+            <p>Checking consent, deck state, and aggregate rank.</p>
           </section>
         ) : null}
 
         {status === "error" ? (
           <section class="panel state-panel error-state">
-            <h2>That load was cursed</h2>
-            <p>The page is here, but the mock data did not make it through.</p>
+            <h2>App state could not load</h2>
+            <p>Check the backend URL or try again shortly.</p>
           </section>
         ) : null}
 
-        {status === "ready" && rankingSummary && deckState && consentState ? (
+        {status === "ready" && rankingSummary && consentState ? (
           <>
             {view === "consent" ? (
               <ConsentGate
                 consentState={consentState}
+                turnstileSiteKey={getTurnstileSiteKey()}
+                isAccepting={isAcceptingConsent}
+                errorMessage={flowError}
                 onAccept={handleAcceptConsent}
-                onDecline={() => setView("methodology")}
-                onOpenContact={() => setView("contact")}
-                onReadMethodology={() => setView("methodology")}
+                onDecline={() => setView("rankings")}
               />
             ) : null}
 
-            {view === "deck" ? (
+            {view === "deck" && deckState ? (
               <SwipeDeckPanel
                 deckState={deckState}
                 onSwipe={handleSwipe}
@@ -142,35 +164,19 @@ function App() {
               />
             ) : null}
 
-            {view === "done" ? (
+            {view === "done" && deckState ? (
               <DailyDone
+                consentState={consentState}
                 streakCount={deckState.streakCount}
+                onCreateShare={createCompletionShare}
                 onSeeRankings={() => setView("rankings")}
-                onReadMethodology={() => setView("methodology")}
-              />
-            ) : null}
-
-            {view === "methodology" ? (
-              <MethodologyPanel
-                onStart={() => setView(consentState.hasConsented ? "deck" : "consent")}
-                onSeeRankings={() => setView("rankings")}
+                onAuthChange={handleAuthChange}
               />
             ) : null}
 
             {view === "rankings" ? (
               <div class="content-column readable-column">
                 <ResearchInterestRank rankingSummary={rankingSummary} />
-                <MethodologyPanel
-                  compact
-                  onStart={() => setView(consentState.hasConsented ? "deck" : "consent")}
-                  onSeeRankings={() => setView("rankings")}
-                />
-              </div>
-            ) : null}
-
-            {view === "contact" ? (
-              <div class="content-column readable-column">
-                <ContactPanel onStart={() => setView(consentState.hasConsented ? "deck" : "consent")} />
               </div>
             ) : null}
           </>

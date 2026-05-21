@@ -5,6 +5,7 @@ const ROYAL_CONTENT_PATTERNS = [
   /\bmonarchy\b/i,
   /\broyal\s+family\b/i,
   /\broyal\s+institution\b/i,
+  /\bprivy\s+council\b/i,
   /\bking\b/i,
   /\bqueen\b/i,
   /สถาบันพระมหากษัตริย์/u,

@@ -1,10 +1,12 @@
 import { HttpError } from "./http.ts";
 import { verifyHumanChallenge } from "./humanChallenge.ts";
+import { createSupabaseAdmin } from "./supabaseAdmin.ts";
 
 export interface VisitorIdentity {
   visitorId: string;
-  token: string;
+  token?: string;
   created: boolean;
+  source: "supabase-auth" | "visitor-token";
 }
 
 const tokenPrefix = "sr_v1";
@@ -15,15 +17,39 @@ export async function getOrCreateVisitorIdentity(
   allowCreate: boolean,
   humanChallengeToken?: unknown
 ): Promise<VisitorIdentity> {
-  const existingToken = getBearerToken(request) ?? getCookie(request, "sr_visitor");
+  const bearerToken = getBearerToken(request);
+  const cookieToken = getCookie(request, "sr_visitor");
 
-  if (existingToken) {
-    const visitorId = await verifyVisitorToken(existingToken);
+  if (bearerToken) {
+    const visitorId = await verifyVisitorToken(bearerToken);
     if (visitorId) {
       return {
         visitorId,
-        token: existingToken,
-        created: false
+        token: bearerToken,
+        created: false,
+        source: "visitor-token"
+      };
+    }
+
+    const supabaseUserId = await verifySupabaseAuthToken(bearerToken);
+    if (supabaseUserId) {
+      return {
+        visitorId: `supabase:${supabaseUserId}`,
+        token: bearerToken,
+        created: false,
+        source: "supabase-auth"
+      };
+    }
+  }
+
+  if (cookieToken) {
+    const visitorId = await verifyVisitorToken(cookieToken);
+    if (visitorId) {
+      return {
+        visitorId,
+        token: cookieToken,
+        created: false,
+        source: "visitor-token"
       };
     }
   }
@@ -40,7 +66,8 @@ export async function getOrCreateVisitorIdentity(
   return {
     visitorId,
     token,
-    created: true
+    created: true,
+    source: "visitor-token"
   };
 }
 
@@ -68,6 +95,20 @@ async function verifyVisitorToken(token: string) {
 
   const expected = await hmacBase64Url(`${visitorId}.${issuedAtRaw}`);
   return timingSafeEqual(signature, expected) ? visitorId : null;
+}
+
+async function verifySupabaseAuthToken(token: string) {
+  try {
+    const supabase = createSupabaseAdmin();
+    const { data, error } = await supabase.auth.getUser(token);
+    if (error || !data.user?.id) {
+      return null;
+    }
+
+    return data.user.id;
+  } catch (_) {
+    return null;
+  }
 }
 
 async function hmacBase64Url(payload: string) {

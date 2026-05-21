@@ -319,6 +319,10 @@ Design issues to fix before shipping:
 
 The current frontend prototype may temporarily label the two deck actions as `Approve` and
 `Disapprove` at the user's request. This is a UI-only deviation for prototype testing.
+The visible leaderboard surface may also use `Daily Approval Pulse` language instead of
+`Research Interest Rank` while this prototype framing is being tested.
+Frontend-facing freeze, threshold, consent, and share-copy states may use `pulse` and
+`tap` wording so the prototype stays internally consistent.
 
 Important:
 

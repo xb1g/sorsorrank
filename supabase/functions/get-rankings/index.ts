@@ -25,14 +25,14 @@ Deno.serve(async (request) => {
         sampleSize: 0,
         rows: [],
         hidden: true,
-        message: "Research rankings are paused during a sensitive review period."
+        message: "The Research Interest Rank is paused during a sensitive review period."
       });
     }
 
     const { data, error } = await supabase
       .from("research_interest_rankings")
       .select(
-        "date,politician_id,display_name,role_label,party_label,search_query,eligible_impressions,research_actions,research_interest_score,hidden_below_threshold"
+        "date,politician_id,display_name,role_label,party_label,search_query,image_url,image_source_url,info_source_url,featured_priority,eligible_impressions,research_actions,research_interest_score,hidden_below_threshold"
       )
       .eq("date", today)
       .eq("hidden_below_threshold", false)
@@ -50,6 +50,10 @@ Deno.serve(async (request) => {
       roleLabel: row.role_label,
       partyLabel: row.party_label,
       searchQuery: row.search_query,
+      imageUrl: row.image_url,
+      imageSourceUrl: row.image_source_url,
+      infoSourceUrl: row.info_source_url,
+      featuredPriority: row.featured_priority,
       eligibleImpressions: row.eligible_impressions,
       researchActions: row.research_actions,
       researchInterestScore: Number(row.research_interest_score),
@@ -64,7 +68,7 @@ Deno.serve(async (request) => {
       sampleSize,
       rows,
       hidden: false,
-      disclaimer: "Aggregate curiosity, not vote intent."
+      disclaimer: "Aggregate taps only. No public row shows individual choices."
     });
   } catch (error) {
     return errorResponse(error);

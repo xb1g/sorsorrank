@@ -12,6 +12,7 @@ These docs are split by job:
 6. [Engineering Review: Static Mobile Architecture](06-eng-review-static-architecture.md) - stack decision, failure modes, and execution plan.
 7. [Frontend Design Doc](07-frontend-design-doc.md) - product-register design system, screen flow, components, states, and current UI corrections.
 8. [Backend Implementation Note](08-backend-implementation.md) - Supabase schema, Edge Functions, ranking, retention, and admin safety choices.
+9. [Supabase Auth Decision](11-supabase-auth.md) - anonymous Auth sessions, JWT handling, and product boundaries.
 
 Core decision: use the lightweight viral product shape, but keep the strongest compliance controls from the heavier plan.
 

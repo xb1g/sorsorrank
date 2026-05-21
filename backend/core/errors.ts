@@ -12,13 +12,13 @@ export type BackendErrorCode =
   | "InvalidPublicCopyError";
 
 const messages: Record<BackendErrorCode, string> = {
-  ConsentRequiredError: "Consent is required before storing Research or Skip actions.",
+  ConsentRequiredError: "Consent is required before saving your taps.",
   DailyLimitExceededError: "The daily 10-card limit has already been reached.",
   DuplicateSwipeError: "This card action was already recorded.",
   CardImpressionRequiredError: "A valid issued card impression is required before recording this action.",
   PoliticianNotFoundError: "This public figure is not available in the active roster.",
-  FreezeModeActiveError: "Research rankings are paused during a sensitive review period.",
-  InsufficientSampleError: "This ranking is hidden until the minimum sample threshold is reached.",
+  FreezeModeActiveError: "The daily pulse is paused during a sensitive review period.",
+  InsufficientSampleError: "This pulse is hidden until the minimum sample threshold is reached.",
   RateLimitExceededError: "Too many requests. Please try again later.",
   UnauthorizedAdminError: "Admin authorization is required.",
   InvalidRosterEntryError: "Roster entries must stay sparse and safety-compliant.",

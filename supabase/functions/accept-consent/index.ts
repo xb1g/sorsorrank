@@ -25,9 +25,12 @@ Deno.serve(async (request) => {
     const privacyNoticeHash = Deno.env.get("PRIVACY_NOTICE_HASH") ?? DEFAULT_PRIVACY_NOTICE_HASH;
     const now = new Date().toISOString();
     const supabase = createSupabaseAdmin();
-    const abuseKeyHash = await hashRequestAbuseKey(request, "accept-consent");
-    await consumeRateLimit(supabase, abuseKeyHash, "accept-consent-abuse-hour", 4, 3600);
-    await consumeRateLimit(supabase, abuseKeyHash, "accept-consent-abuse-day", 8, 86400);
+
+    if (!hasPresentedIdentity(request)) {
+      const abuseKeyHash = await hashRequestAbuseKey(request, "accept-consent");
+      await consumeRateLimit(supabase, abuseKeyHash, "accept-consent-abuse-hour", 4, 3600);
+      await consumeRateLimit(supabase, abuseKeyHash, "accept-consent-abuse-day", 8, 86400);
+    }
 
     const identity = await getOrCreateVisitorIdentity(request, true, body.humanChallengeToken);
     const visitorKeyHash = await hashVisitorId(identity.visitorId);
@@ -48,15 +51,25 @@ Deno.serve(async (request) => {
       throw error;
     }
 
+    const headers = identity.source === "visitor-token" && identity.token
+      ? { "Set-Cookie": visitorCookieHeader(identity.token) }
+      : undefined;
+
     return jsonResponse({
       accepted,
       consentVersion,
       canSwipe: accepted,
-      visitorToken: identity.token
-    }, 200, {
-      "Set-Cookie": visitorCookieHeader(identity.token)
-    });
+      visitorToken: identity.source === "visitor-token" ? identity.token : undefined,
+      authMode: identity.source
+    }, 200, headers);
   } catch (error) {
     return errorResponse(error);
   }
 });
+
+function hasPresentedIdentity(request: Request) {
+  const authorization = request.headers.get("authorization") ?? "";
+  const cookie = request.headers.get("cookie") ?? "";
+
+  return /^Bearer\s+\S+/i.test(authorization) || /(?:^|;\s*)sr_visitor=/.test(cookie);
+}

@@ -20,13 +20,13 @@ const backendStatuses: Record<string, number> = {
 };
 
 const backendMessages: Record<string, string> = {
-  ConsentRequiredError: "Consent is required before storing Research or Skip actions.",
+  ConsentRequiredError: "Consent is required before saving your taps.",
   DailyLimitExceededError: "You already did your 10 today.",
   DuplicateSwipeError: "This action was already recorded.",
   CardImpressionRequiredError: "A valid issued card impression is required before recording this action.",
   PoliticianNotFoundError: "This public figure is not available.",
-  FreezeModeActiveError: "Research rankings are paused during a sensitive review period.",
-  InsufficientSampleError: "This rank is hidden until the sample threshold is reached.",
+  FreezeModeActiveError: "The daily 10 is paused during a sensitive review period.",
+  InsufficientSampleError: "The Research Interest Rank is hidden until the sample threshold is reached.",
   RateLimitExceededError: "Too many requests. Please try again later.",
   UnauthorizedAdminError: "Admin authorization is required.",
   InvalidRosterEntryError: "Roster entries must stay sparse and safety-compliant.",

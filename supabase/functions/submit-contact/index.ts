@@ -50,13 +50,15 @@ Deno.serve(async (request) => {
       throw error;
     }
 
+    const headers = identity.source === "visitor-token" && identity.token
+      ? { "Set-Cookie": visitorCookieHeader(identity.token) }
+      : undefined;
+
     return jsonResponse({
       id: data.id,
       status: "received",
       createdAt: data.created_at
-    }, 200, {
-      "Set-Cookie": visitorCookieHeader(identity.token)
-    });
+    }, 200, headers);
   } catch (error) {
     return errorResponse(error);
   }

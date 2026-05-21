@@ -25,7 +25,7 @@ Deno.serve(async (request) => {
     if (request.method === "GET") {
       const { data, error } = await supabase
         .from("politicians")
-        .select("id,display_name,slug,role_label,party_label,status,search_query,active_candidate,legal_reviewed_at,roster_version,updated_at")
+        .select("id,display_name,slug,role_label,party_label,status,search_query,image_url,image_source_url,info_source_url,featured_priority,active_candidate,legal_reviewed_at,roster_version,updated_at")
         .order("updated_at", { ascending: false });
 
       if (error) {
@@ -44,6 +44,10 @@ Deno.serve(async (request) => {
     const partyLabel = optionalString(body.partyLabel, "partyLabel", 120);
     const status = requireString(body.status ?? "draft", "status", 16);
     const searchQuery = requireString(body.searchQuery, "searchQuery", 240);
+    const imageUrl = optionalString(body.imageUrl, "imageUrl", 1000);
+    const imageSourceUrl = optionalString(body.imageSourceUrl, "imageSourceUrl", 1000);
+    const infoSourceUrl = optionalString(body.infoSourceUrl, "infoSourceUrl", 1000);
+    const featuredPriority = body.featuredPriority === undefined ? undefined : Number(body.featuredPriority);
     const activeCandidate =
       body.activeCandidate === undefined ? false : requireBoolean(body.activeCandidate, "activeCandidate");
     const legalReviewedAt = optionalString(body.legalReviewedAt, "legalReviewedAt", 64);
@@ -53,6 +57,13 @@ Deno.serve(async (request) => {
     }
 
     validateRosterText(displayName, roleLabel, partyLabel, searchQuery);
+    validateRosterUrl(imageUrl, "imageUrl");
+    validateRosterUrl(imageSourceUrl, "imageSourceUrl");
+    validateRosterUrl(infoSourceUrl, "infoSourceUrl");
+
+    if (featuredPriority !== undefined && (!Number.isInteger(featuredPriority) || featuredPriority < 1 || featuredPriority > 500)) {
+      throw new HttpError(400, "BadRequest", "featuredPriority must be between 1 and 500.");
+    }
 
     const payload = {
       ...(id ? { id } : {}),
@@ -62,6 +73,10 @@ Deno.serve(async (request) => {
       party_label: partyLabel,
       status,
       search_query: searchQuery,
+      image_url: imageUrl,
+      image_source_url: imageSourceUrl,
+      info_source_url: infoSourceUrl,
+      ...(featuredPriority === undefined ? {} : { featured_priority: featuredPriority }),
       active_candidate: activeCandidate,
       legal_reviewed_at: legalReviewedAt
     };
@@ -84,6 +99,7 @@ Deno.serve(async (request) => {
       metadata: {
         slug,
         status,
+        featuredPriority,
         activeCandidate
       }
     });
@@ -97,3 +113,13 @@ Deno.serve(async (request) => {
     return errorResponse(error);
   }
 });
+
+function validateRosterUrl(value: string | null, fieldName: string) {
+  if (!value) {
+    return;
+  }
+
+  if (!/^https:\/\//.test(value) || /[<>]/.test(value)) {
+    throw new HttpError(400, "BadRequest", `${fieldName} must be a safe https URL.`);
+  }
+}
