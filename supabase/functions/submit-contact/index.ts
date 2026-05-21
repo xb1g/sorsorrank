@@ -16,7 +16,7 @@ Deno.serve(async (request) => {
     assertMethod(request, "POST");
 
     const body = await readJsonObject(request);
-    const identity = await getOrCreateVisitorIdentity(request, true);
+    const identity = await getOrCreateVisitorIdentity(request, true, body.humanChallengeToken);
     const visitorKeyHash = await hashVisitorId(identity.visitorId);
     const contactEmail = requireString(body.contactEmail, "contactEmail", 254);
     const requestType = requireString(body.requestType, "requestType", 64);

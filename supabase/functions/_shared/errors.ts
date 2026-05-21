@@ -13,7 +13,10 @@ const backendStatuses: Record<string, number> = {
   InvalidRosterEntryError: 400,
   InvalidPublicCopyError: 400,
   VisitorTokenRequired: 401,
-  DailyTenIncompleteError: 409
+  DailyTenIncompleteError: 409,
+  HumanChallengeRequired: 400,
+  HumanChallengeFailed: 403,
+  HumanChallengeUnavailable: 503
 };
 
 const backendMessages: Record<string, string> = {
@@ -29,7 +32,10 @@ const backendMessages: Record<string, string> = {
   InvalidRosterEntryError: "Roster entries must stay sparse and safety-compliant.",
   InvalidPublicCopyError: "Public copy contains banned framing.",
   VisitorTokenRequired: "A server-issued visitor token is required.",
-  DailyTenIncompleteError: "Complete today's 10 before creating this share."
+  DailyTenIncompleteError: "Complete today's 10 before creating this share.",
+  HumanChallengeRequired: "Human verification is required.",
+  HumanChallengeFailed: "Human verification failed.",
+  HumanChallengeUnavailable: "Human verification is not available."
 };
 
 export function errorResponse(error: unknown) {

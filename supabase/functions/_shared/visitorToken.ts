@@ -1,4 +1,5 @@
 import { HttpError } from "./http.ts";
+import { verifyHumanChallenge } from "./humanChallenge.ts";
 
 export interface VisitorIdentity {
   visitorId: string;
@@ -9,7 +10,11 @@ export interface VisitorIdentity {
 const tokenPrefix = "sr_v1";
 const maxTokenAgeMs = 180 * 24 * 60 * 60 * 1000;
 
-export async function getOrCreateVisitorIdentity(request: Request, allowCreate: boolean): Promise<VisitorIdentity> {
+export async function getOrCreateVisitorIdentity(
+  request: Request,
+  allowCreate: boolean,
+  humanChallengeToken?: unknown
+): Promise<VisitorIdentity> {
   const existingToken = getBearerToken(request) ?? getCookie(request, "sr_visitor");
 
   if (existingToken) {
@@ -26,6 +31,8 @@ export async function getOrCreateVisitorIdentity(request: Request, allowCreate: 
   if (!allowCreate) {
     throw new HttpError(401, "VisitorTokenRequired", "A server-issued visitor token is required.");
   }
+
+  await verifyHumanChallenge(humanChallengeToken, request);
 
   const visitorId = crypto.randomUUID();
   const token = await signVisitorToken(visitorId, Date.now());

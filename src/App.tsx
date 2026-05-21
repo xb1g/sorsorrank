@@ -79,7 +79,7 @@ function App() {
           <div class="brand-mark">S</div>
           <div>
             <strong>SorsorRank</strong>
-            <span>Research Interest Rank</span>
+            <span>Politician Leaderboard</span>
           </div>
         </div>
         <nav class="topnav">
@@ -88,21 +88,21 @@ function App() {
             type="button"
             onClick={() => setView("methodology")}
           >
-            Methodology
+            How it works
           </button>
           <button
             class={`nav-chip ${view === "rankings" ? "is-active" : ""}`}
             type="button"
             onClick={() => setView("rankings")}
           >
-            Research Interest Rank
+            Leaderboard
           </button>
           <button
             class={`nav-chip ${view === "contact" ? "is-active" : ""}`}
             type="button"
             onClick={() => setView("contact")}
           >
-            Contact
+            Reach us
           </button>
         </nav>
       </header>
@@ -110,15 +110,15 @@ function App() {
       <main class={view === "deck" || view === "consent" || view === "done" ? "focus-layout" : "content-layout"}>
         {status === "loading" ? (
           <section class="panel state-panel">
-            <h2>Loading</h2>
-            <p>Preparing consent, deck, and ranking data.</p>
+            <h2>Loading the board</h2>
+            <p>Pulling in the deck, the stats, and the latest vibes.</p>
           </section>
         ) : null}
 
         {status === "error" ? (
           <section class="panel state-panel error-state">
-            <h2>Something failed to load</h2>
-            <p>The consent-first flow is in place, but the mocked data source failed.</p>
+            <h2>That load was cursed</h2>
+            <p>The page is here, but the mock data did not make it through.</p>
           </section>
         ) : null}
 

@@ -26,9 +26,10 @@ Deno.serve(async (request) => {
     const now = new Date().toISOString();
     const supabase = createSupabaseAdmin();
     const abuseKeyHash = await hashRequestAbuseKey(request, "accept-consent");
-    await consumeRateLimit(supabase, abuseKeyHash, "accept-consent-abuse", 20, 3600);
+    await consumeRateLimit(supabase, abuseKeyHash, "accept-consent-abuse-hour", 4, 3600);
+    await consumeRateLimit(supabase, abuseKeyHash, "accept-consent-abuse-day", 8, 86400);
 
-    const identity = await getOrCreateVisitorIdentity(request, true);
+    const identity = await getOrCreateVisitorIdentity(request, true, body.humanChallengeToken);
     const visitorKeyHash = await hashVisitorId(identity.visitorId);
     const config = await readAppConfig(supabase);
     const consentVersion = config.string("consent_version", CURRENT_CONSENT_VERSION);

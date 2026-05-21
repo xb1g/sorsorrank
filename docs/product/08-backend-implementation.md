@@ -62,7 +62,9 @@ Rows below `minimum_ranking_sample_size` are hidden from the public ranking resp
 
 Visitors use server-signed visitor tokens. The client can hold the token, but cannot mint arbitrary visitor IDs without `VISITOR_SIGNING_SECRET`.
 
-Visitor IDs are hashed with `VISITOR_HASH_SALT` before storage. The backend does not store raw IP addresses in analytics tables. Abuse rate-limit keys are derived from request metadata with `ABUSE_HASH_SALT` and stored only as short-retention hashes.
+New visitor-token minting requires a server-verified human challenge. The implementation expects Cloudflare Turnstile by default through `TURNSTILE_SECRET_KEY`. If the challenge secret is missing, public token minting fails closed.
+
+Visitor IDs are hashed with `VISITOR_HASH_SALT` before storage. The backend does not store raw IP addresses in analytics tables. Abuse rate-limit keys are derived from request metadata with `ABUSE_HASH_SALT` and stored only as short-retention hashes. Pre-mint abuse limits are deliberately tighter than post-token request limits so one source cannot push a public figure over the sample threshold by minting many visitors.
 
 Raw swipe events and issued card impressions are intended for short retention only. `cleanup-retention` caps the raw event retention window at 7 days even if the environment variable is misconfigured higher.
 
@@ -79,6 +81,7 @@ Roster validation rejects obvious markup and monarchy, royal-family, or royal-in
 - `VISITOR_SIGNING_SECRET`
 - `VISITOR_HASH_SALT`
 - `ABUSE_HASH_SALT`
+- `TURNSTILE_SECRET_KEY`
 - `ADMIN_API_TOKEN`
 - `PUBLIC_APP_ORIGIN`
 - optional `PRIVACY_NOTICE_HASH`

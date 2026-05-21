@@ -17,15 +17,15 @@ export function ConsentGate({
 }: ConsentGateProps) {
   return (
     <section class="panel consent-gate">
-      <p class="panel-label">Consent</p>
-      <h1>Do your 10. Search for yourself. See what people are researching.</h1>
+      <p class="panel-label">Before you start</p>
+      <h1>Do your 10. Check the names. Build the board.</h1>
       <p class="consent-copy">
-        Swipes are used only for aggregate Research Interest Rank. This is not a poll,
-        endorsement, prediction, approval rating, or voting guide.
+        Your swipes only feed the Politician Leaderboard. This is not a poll, a prediction,
+        or a voting guide.
       </p>
       <div class="consent-meta">
         <span>Consent version {consentState.version}</span>
-        <span>Storage starts only after explicit consent</span>
+        <span>Nothing gets saved until you say yes</span>
       </div>
       <div class="consent-links">
         <button class="text-link-button" type="button" onClick={onReadMethodology}>
@@ -40,13 +40,13 @@ export function ConsentGate({
       </div>
       <div class="consent-actions">
         <button class="primary-cta wide" type="button" onClick={onAccept}>
-          Start my 10
+          Start ranking
         </button>
         <button class="ghost-cta wide" type="button" onClick={onReadMethodology}>
-          Read methodology
+          See the rules
         </button>
         <button class="text-link-button" type="button" onClick={onDecline}>
-          Decline
+          Not right now
         </button>
       </div>
     </section>
