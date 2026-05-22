@@ -1,6 +1,7 @@
 import { useState } from "preact/hooks";
 import type { ConsentState } from "../types";
 import { AccountPanel } from "./AccountPanel";
+import { MatchCardHologram } from "./MatchCardHologram";
 
 interface DailyDoneProps {
   consentState: ConsentState;
@@ -20,27 +21,20 @@ export function DailyDone({
   consentState,
   streakCount,
   onSeeRankings,
-  onCreateShare,
+  onCreateShare: _onCreateShare,
   onAuthChange
 }: DailyDoneProps) {
-  const [shareCopy, setShareCopy] = useState("");
-  const [isSharing, setIsSharing] = useState(false);
-  const [errorMessage, setErrorMessage] = useState("");
-
-  async function handleCreateShare() {
-    setIsSharing(true);
-    setErrorMessage("");
-    try {
-      const share = await onCreateShare();
-      setShareCopy(share.copy);
-    } catch (error) {
-      setErrorMessage(error instanceof Error ? error.message : "ไม่สามารถสร้างการ์ดสำหรับแชร์ได้");
-    } finally {
-      setIsSharing(false);
-    }
-  }
+  const [showHologram, setShowHologram] = useState(false);
 
   return (
+    <>
+      {showHologram && (
+        <MatchCardHologram 
+          streakCount={streakCount} 
+          todayLabel={todayLabel} 
+          onClose={() => setShowHologram(false)} 
+        />
+      )}
     <div class="content-column profile-brutalist">
       <div class="profile-hero">
         <div class="profile-title-row">
@@ -83,15 +77,14 @@ export function DailyDone({
       <div class="profile-hero">
         <div class="account-header-sharp">
           <span class="panel-label-sharp">แชร์การ์ด</span>
-          <strong class="account-title-sharp">{shareCopy || "ฉันค้นคว้าบุคคลสาธารณะ 10 คนวันนี้ ถึงตาคุณแล้ว"}</strong>
-          <p class="account-desc-sharp">ส่ง 10 ใบนี้เข้าแชทกลุ่มโดยไม่ต้องเปิดเผยตัวเลือกของคุณ</p>
+          <strong class="account-title-sharp">ฉันทำ Daily Deck ของวันนี้ครบแล้ว ถึงตาคุณแล้ว</strong>
+          <p class="account-desc-sharp">ส่ง Match Card เข้าแชทกลุ่มโดยไม่ต้องเปิดเผยตัวเลือกของคุณ</p>
         </div>
         
         <div class="profile-hero-actions">
-          <button class="primary-cta sharp-cta wide" type="button" onClick={handleCreateShare} disabled={isSharing}>
-            {isSharing ? "กำลังสร้าง..." : "ท้าเพื่อน"}
+          <button class="primary-cta sharp-cta wide" type="button" onClick={() => setShowHologram(true)}>
+            ท้าเพื่อน
           </button>
-          {errorMessage ? <p class="inline-error-sharp" style={{ marginTop: "12px" }}>{errorMessage}</p> : null}
         </div>
       </div>
 
@@ -104,5 +97,6 @@ export function DailyDone({
         </>
       ) : null}
     </div>
+    </>
   );
 }
