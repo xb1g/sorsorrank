@@ -120,18 +120,20 @@ export function SwipeDeckPanel({
   }
 
   if (!activeCard) {
+    const stateTitle = deckState.freezeMode
+      ? "พักชั่วคราว"
+      : deckState.doneToday
+        ? "คุณทำครบ 10 ใบแล้ว"
+        : "ยังไม่มีนักการเมือง";
+    const stateMessage = deckState.freezeMode
+      ? "อันดับความสนใจถูกซ่อนในโหมดตรวจสอบ"
+      : deckState.message ?? (deckState.doneToday ? "กลับมาใหม่พรุ่งนี้สำหรับเด็คประจำวันชุดต่อไป" : null);
+
     return (
       <section class="panel state-panel">
         <p class="panel-label">{deckState.freezeMode ? "พักชั่วคราว" : "เด็คประจำวัน"}</p>
-        <h2>{deckState.doneToday ? "คุณทำครบ 10 ใบแล้ว" : "ไม่มีการ์ดในเด็ค"}</h2>
-        <p>
-          {deckState.freezeMode
-            ? "อันดับความสนใจถูกซ่อนในโหมดตรวจสอบ"
-            : deckState.message ??
-              (deckState.doneToday
-                ? "กลับมาใหม่พรุ่งนี้สำหรับเด็คประจำวันชุดต่อไป"
-                : "ขณะนี้ยังไม่มีรายชื่อในการ์ด")}
-        </p>
+        <h2>{stateTitle}</h2>
+        {stateMessage ? <p>{stateMessage}</p> : null}
       </section>
     );
   }
