@@ -63,11 +63,11 @@ export function AccountPanel({ consentState, onAuthChange }: AccountPanelProps) 
 
   if (!consentState.authConfigured) {
     return (
-      <div class="account-panel">
-        <div>
-          <span class="panel-label">Account</span>
-          <strong>Account creation needs Supabase config.</strong>
-          <p>Add the Supabase URL and publishable key to enable sign up and sign in.</p>
+      <div class="account-panel-sharp">
+        <div class="account-header-sharp">
+          <span class="panel-label-sharp">ACCOUNT ERROR</span>
+          <strong class="account-title-sharp">Missing Configuration</strong>
+          <p class="account-desc-sharp">Supabase URL and publishable key are required to enable sign up and sign in.</p>
         </div>
       </div>
     );
@@ -75,33 +75,32 @@ export function AccountPanel({ consentState, onAuthChange }: AccountPanelProps) 
 
   if (consentState.authMode === "supabase-account") {
     return (
-      <div class="account-panel">
-        <div>
-          <span class="panel-label">Account</span>
-          <strong>Signed in{consentState.authEmail ? ` as ${consentState.authEmail}` : ""}</strong>
-          <p>Your daily 10 stays tied to this Supabase account.</p>
+      <div class="account-panel-sharp">
+        <div class="account-header-sharp">
+          <span class="panel-label-sharp">AUTHENTICATED</span>
+          <strong class="account-title-sharp">Signed in as {consentState.authEmail}</strong>
+          <p class="account-desc-sharp">Your daily 10 and rank contributions are securely tied to this session.</p>
         </div>
-        <button class="ghost-cta wide" type="button" onClick={handleSignOut} disabled={isSubmitting}>
+        <button class="ghost-cta sharp-cta wide" type="button" onClick={handleSignOut} disabled={isSubmitting}>
           {isSubmitting ? "Signing out..." : "Sign out"}
         </button>
-        {message ? <p class="inline-success">{message}</p> : null}
-        {errorMessage ? <p class="inline-error">{errorMessage}</p> : null}
+        {message ? <p class="inline-success-sharp">{message}</p> : null}
+        {errorMessage ? <p class="inline-error-sharp">{errorMessage}</p> : null}
       </div>
     );
   }
 
   return (
-    <div class="account-panel">
-      <div>
-        <span class="panel-label">Account</span>
-        <strong>{mode === "create" ? "Create an account" : "Sign in"}</strong>
-        <p>
-          Optional: save this browser session to return to your streak and daily 10.
-          Research and Skip actions still roll up only into aggregate rank.
+    <div class="account-panel-sharp">
+      <div class="account-header-sharp">
+        <span class="panel-label-sharp">ACCOUNT</span>
+        <strong class="account-title-sharp">{mode === "create" ? "Create an account" : "Sign in"}</strong>
+        <p class="account-desc-sharp">
+          Save your session to retain your streak and progress. All interactions remain completely anonymous and roll up only into aggregate rankings.
         </p>
       </div>
 
-      <div class="account-mode-row" role="tablist" aria-label="Account mode">
+      <div class="account-mode-row-sharp" role="tablist" aria-label="Account mode">
         <button
           class={mode === "create" ? "is-active" : ""}
           type="button"
@@ -118,10 +117,11 @@ export function AccountPanel({ consentState, onAuthChange }: AccountPanelProps) 
         </button>
       </div>
 
-      <form class="account-form" onSubmit={handleSubmit}>
-        <label>
-          <span>Email</span>
+      <form class="account-form-sharp" onSubmit={handleSubmit}>
+        <label class="form-label-sharp">
+          <span class="form-label-text">Email</span>
           <input
+            class="form-input-sharp"
             type="email"
             autocomplete="email"
             value={email}
@@ -129,9 +129,10 @@ export function AccountPanel({ consentState, onAuthChange }: AccountPanelProps) 
             required
           />
         </label>
-        <label>
-          <span>Password</span>
+        <label class="form-label-sharp">
+          <span class="form-label-text">Password</span>
           <input
+            class="form-input-sharp"
             type="password"
             autocomplete={mode === "create" ? "new-password" : "current-password"}
             minlength={8}
@@ -140,13 +141,13 @@ export function AccountPanel({ consentState, onAuthChange }: AccountPanelProps) 
             required
           />
         </label>
-        <button class="ghost-cta wide" type="submit" disabled={isSubmitting}>
+        <button class="ghost-cta sharp-cta wide account-submit-btn" type="submit" disabled={isSubmitting}>
           {isSubmitting ? "Working..." : mode === "create" ? "Create account" : "Sign in"}
         </button>
       </form>
 
-      {message ? <p class="inline-success">{message}</p> : null}
-      {errorMessage ? <p class="inline-error">{errorMessage}</p> : null}
+      {message ? <p class="inline-success-sharp">{message}</p> : null}
+      {errorMessage ? <p class="inline-error-sharp">{errorMessage}</p> : null}
     </div>
   );
 }

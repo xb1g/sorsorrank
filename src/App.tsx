@@ -204,6 +204,7 @@ function App() {
                 deckState={deckState}
                 onViewRankings={() => setView("rankings")}
                 onViewDeck={() => setView("deck")}
+                onAuthChange={handleAuthChange}
               />
             ) : null}
           </>

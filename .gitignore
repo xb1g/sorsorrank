@@ -19,4 +19,7 @@ vite.config.d.ts
 .vercel
 .gstack/
 .agents/
+.antigravitycli/
+.impeccable/
+.superset/
 skills-lock.json
