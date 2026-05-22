@@ -17,7 +17,6 @@ import type {
 } from "../types";
 
 const APP_LATENCY_MS = 220;
-const DAILY_LIMIT = 10;
 const CONSENT_KEY = "sorsorrank-consent-version";
 const VISITOR_TOKEN_KEY = "sorsorrank-visitor-token";
 const CONSENT_VERSION = "2026-05-20";
@@ -194,11 +193,12 @@ export async function fetchDeckState(): Promise<DeckState> {
   }
 
   await wait(APP_LATENCY_MS);
+  const localSwipes = Number(window.localStorage.getItem("sorsorrank-local-swipes") ?? "0");
   return {
     cards: dailyDeck,
-    dailyLimit: DAILY_LIMIT,
-    usedToday: 0,
-    remaining: DAILY_LIMIT,
+    dailyLimit: 99999,
+    usedToday: localSwipes,
+    remaining: 99999,
     streakCount: 4
   };
 }
@@ -217,9 +217,13 @@ export async function recordSwipe(input: RecordSwipeInput): Promise<RecordSwipeR
   }
 
   await wait(140);
+  const currentSwipes = Number(window.localStorage.getItem("sorsorrank-local-swipes") ?? "0");
+  const nextSwipes = currentSwipes + 1;
+  window.localStorage.setItem("sorsorrank-local-swipes", String(nextSwipes));
+
   return {
-    usedToday: 1,
-    remaining: 9
+    usedToday: nextSwipes,
+    remaining: 99999
   };
 }
 

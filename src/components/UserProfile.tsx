@@ -16,7 +16,8 @@ export function UserProfile({ consentState, deckState, onViewRankings, onViewDec
   const totalDone = deckState?.usedToday ?? 0;
   const dailyLimit = deckState?.dailyLimit ?? 10;
   const streakCount = deckState?.streakCount ?? 0;
-  const progressPercent = Math.min((totalDone / dailyLimit) * 100, 100);
+  const targetLimit = dailyLimit > 100 ? 10 : dailyLimit;
+  const progressPercent = Math.min((totalDone / targetLimit) * 100, 100);
   const canSwipe = consentState.hasConsented && !deckState?.doneToday && !deckState?.freezeMode;
 
   const [history, setHistory] = useState<SwipeHistoryItem[] | null>(null);
@@ -64,7 +65,20 @@ export function UserProfile({ consentState, deckState, onViewRankings, onViewDec
           </div>
           <div class="raw-stat">
             <span class="raw-label">ทำแล้ววันนี้</span>
-            <strong class="raw-value">{totalDone}<span class="raw-slash">/</span><span class="raw-limit">{dailyLimit}</span></strong>
+            <strong class="raw-value">
+              {totalDone}
+              {dailyLimit > 100 ? (
+                <>
+                  <span class="raw-slash">/</span>
+                  <span class="raw-limit">∞</span>
+                </>
+              ) : (
+                <>
+                  <span class="raw-slash">/</span>
+                  <span class="raw-limit">{dailyLimit}</span>
+                </>
+              )}
+            </strong>
           </div>
         </div>
 

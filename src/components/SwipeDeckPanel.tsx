@@ -1,6 +1,7 @@
 import { useMemo, useState, useRef } from "preact/hooks";
 import type { DeckCard, DeckState, SwipeAction } from "../types";
 import { GoogleIcon, SearchIcon } from "./icons";
+import { LoadingScreen } from "./LoadingScreen";
 
 const InfoIcon = () => (
   <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" stroke-linejoin="miter">
@@ -47,7 +48,10 @@ export function SwipeDeckPanel({
   const [lastAction, setLastAction] = useState<SwipeAction | null>(null);
   const [failedImageIds, setFailedImageIds] = useState<Set<string>>(() => new Set());
 
-  const activeCard = deckState.cards[activeIndex];
+  const isUnlimited = deckState.dailyLimit > 100;
+  const activeCard = deckState.cards.length > 0
+    ? deckState.cards[activeIndex % deckState.cards.length]
+    : undefined;
   const bubbles = useMemo(() => (lastAction ? effectMap[lastAction] : []), [lastAction]);
   const showImage = Boolean(activeCard?.imageUrl && !failedImageIds.has(activeCard.id));
 
@@ -120,18 +124,33 @@ export function SwipeDeckPanel({
   }
 
   if (!activeCard) {
+    if (!deckState.freezeMode && !deckState.doneToday && deckState.cards.length === 0) {
+      return (
+        <section class="panel state-panel">
+          <p class="panel-label">10 ใบประจำวัน</p>
+          <h2>สำรวจครบทั้งหมดแล้ว</h2>
+          <p>คุณได้สำรวจนักการเมืองที่มีในระบบ ณ ขณะนี้ทั้งหมดแล้ว! ขอบคุณที่ร่วมค้นคว้าวิจัยประชาธิปไตยกับเรา คุณสามารถติดตามอันดับความสนใจหรือกลับมาใหม่ในวันพรุ่งนี้</p>
+          <button class="btn btn-primary" type="button" onClick={onComplete} style={{ marginTop: "24px" }}>
+            ดูผลสรุปวันนี้
+          </button>
+        </section>
+      );
+    }
+
+    if (!deckState.freezeMode && !deckState.doneToday) {
+      return <LoadingScreen />;
+    }
+
     const stateTitle = deckState.freezeMode
       ? "พักชั่วคราว"
-      : deckState.doneToday
-        ? "คุณทำครบ 10 ใบแล้ว"
-        : "ยังไม่มีนักการเมือง";
+      : "คุณทำครบ 10 ใบแล้ว";
     const stateMessage = deckState.freezeMode
       ? "อันดับความสนใจถูกซ่อนในโหมดตรวจสอบ"
-      : deckState.message ?? (deckState.doneToday ? "กลับมาใหม่พรุ่งนี้สำหรับเด็คประจำวันชุดต่อไป" : null);
+      : deckState.message ?? "กลับมาใหม่พรุ่งนี้สำหรับ 10 ใบชุดต่อไป";
 
     return (
       <section class="panel state-panel">
-        <p class="panel-label">{deckState.freezeMode ? "พักชั่วคราว" : "เด็คประจำวัน"}</p>
+        <p class="panel-label">{deckState.freezeMode ? "พักชั่วคราว" : "10 ใบประจำวัน"}</p>
         <h2>{stateTitle}</h2>
         {stateMessage ? <p>{stateMessage}</p> : null}
       </section>
@@ -151,9 +170,9 @@ export function SwipeDeckPanel({
         <div class="swipe-stack-container" style={{ position: "relative", height: "65vh", minHeight: "500px", marginTop: "16px" }}>
           
           {/* Card 2 (Next in deck) */}
-          {activeIndex + 1 < deckState.cards.length && (
+          {deckState.cards.length > 0 && (isUnlimited || activeIndex + 1 < deckState.cards.length) && (
             <article 
-              key={deckState.cards[activeIndex + 1].id}
+              key={deckState.cards[(activeIndex + 1) % deckState.cards.length].id}
               class="swipe-card swipe-card-behind"
               style={{
                 position: "absolute",
@@ -164,10 +183,10 @@ export function SwipeDeckPanel({
                 transition: "all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1)"
               }}
             >
-              {deckState.cards[activeIndex + 1].imageUrl ? (
-                <img class="full-bleed-img" src={deckState.cards[activeIndex + 1].imageUrl} alt="" />
+              {deckState.cards[(activeIndex + 1) % deckState.cards.length].imageUrl ? (
+                <img class="full-bleed-img" src={deckState.cards[(activeIndex + 1) % deckState.cards.length].imageUrl} alt="" />
               ) : (
-                <div class="full-bleed-avatar">{getInitials(deckState.cards[activeIndex + 1].displayName)}</div>
+                <div class="full-bleed-avatar">{getInitials(deckState.cards[(activeIndex + 1) % deckState.cards.length].displayName)}</div>
               )}
               <div class="card-gradient-overlay" />
             </article>
@@ -234,7 +253,7 @@ export function SwipeDeckPanel({
 
             <div class="swipe-content bottom-aligned-content">
               <div class="card-header-row">
-                <span class="card-badge">การ์ดใบที่ {activeIndex + 1} / {deckState.dailyLimit}</span>
+                <span class="card-badge">การ์ดใบที่ {activeIndex + 1} {isUnlimited ? "/ ∞" : `/ ${deckState.dailyLimit}`}</span>
                 <button 
                   class="icon-btn expand-btn" 
                   onPointerDown={(e) => e.stopPropagation()} 

@@ -44,7 +44,7 @@ export function DailyDone({
     <div class="content-column profile-brutalist">
       <div class="profile-hero">
         <div class="profile-title-row">
-          <h2 class="profile-hero-title">เคลียร์เด็คแล้ว</h2>
+          <h2 class="profile-hero-title">สำเร็จ</h2>
           <span class="profile-auth-status">
             10 / 10
           </span>

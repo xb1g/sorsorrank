@@ -87,7 +87,6 @@ export const rankingSummary: RankingSummary = {
 };
 
 export const dailyDeck: DeckCard[] = rankingSummary.politicians
-  .slice(0, 10)
   .map((politician, index) => ({
     ...politician,
     searchQuery: `${politician.displayName} ${politician.partyLabel ?? ""} Thailand`.trim(),
