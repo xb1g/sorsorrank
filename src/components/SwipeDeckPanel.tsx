@@ -1,6 +1,21 @@
-import { useMemo, useState } from "preact/hooks";
+import { useMemo, useState, useRef } from "preact/hooks";
 import type { DeckCard, DeckState, SwipeAction } from "../types";
-import { ChevronRightIcon, SearchIcon } from "./icons";
+import { GoogleIcon, SearchIcon } from "./icons";
+
+const InfoIcon = () => (
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" stroke-linejoin="miter">
+    <circle cx="12" cy="12" r="10"></circle>
+    <line x1="12" y1="16" x2="12" y2="12"></line>
+    <line x1="12" y1="8" x2="12.01" y2="8"></line>
+  </svg>
+);
+
+const CloseIcon = () => (
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" stroke-linejoin="miter">
+    <line x1="18" y1="6" x2="6" y2="18"></line>
+    <line x1="6" y1="6" x2="18" y2="18"></line>
+  </svg>
+);
 
 interface SwipeDeckPanelProps {
   deckState: DeckState;
@@ -33,12 +48,43 @@ export function SwipeDeckPanel({
   const [failedImageIds, setFailedImageIds] = useState<Set<string>>(() => new Set());
 
   const activeCard = deckState.cards[activeIndex];
-  const completedCount = Math.min(deckState.usedToday + activeIndex, deckState.dailyLimit);
-  const remaining = Math.max(deckState.remaining - activeIndex, 0);
-  const progressLabel = `${Math.min(completedCount + 1, deckState.dailyLimit)}/${deckState.dailyLimit}`;
-  const completion = Math.min((completedCount / deckState.dailyLimit) * 100, 100);
   const bubbles = useMemo(() => (lastAction ? effectMap[lastAction] : []), [lastAction]);
   const showImage = Boolean(activeCard?.imageUrl && !failedImageIds.has(activeCard.id));
+
+  const [dragOffset, setDragOffset] = useState(0);
+  const [isDragging, setIsDragging] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(false);
+  const dragStartX = useRef(0);
+
+  const dragThreshold = 120; // px to trigger swipe
+
+  function handlePointerDown(e: PointerEvent) {
+    if (isBusy) return;
+    (e.target as HTMLElement).setPointerCapture(e.pointerId);
+    dragStartX.current = e.clientX;
+    setIsDragging(true);
+    setDragOffset(0);
+  }
+
+  function handlePointerMove(e: PointerEvent) {
+    if (!isDragging || isBusy) return;
+    const deltaX = e.clientX - dragStartX.current;
+    setDragOffset(deltaX);
+  }
+
+  function handlePointerUp(e: PointerEvent) {
+    if (!isDragging) return;
+    setIsDragging(false);
+    (e.target as HTMLElement).releasePointerCapture(e.pointerId);
+
+    if (dragOffset > dragThreshold) {
+      handleSwipe("research");
+    } else if (dragOffset < -dragThreshold) {
+      handleSwipe("skip");
+    } else {
+      setDragOffset(0); // Snap back
+    }
+  }
 
   async function handleSwipe(action: SwipeAction) {
     if (!activeCard || isBusy) {
@@ -54,7 +100,8 @@ export function SwipeDeckPanel({
     } catch (error) {
       setIsBusy(false);
       setLastAction(null);
-      setErrorMessage(error instanceof Error ? error.message : "This action could not be recorded.");
+      setDragOffset(0);
+      setErrorMessage(error instanceof Error ? error.message : "ไม่สามารถบันทึกการกระทำนี้ได้");
       return;
     }
 
@@ -66,6 +113,8 @@ export function SwipeDeckPanel({
       }
 
       setActiveIndex(nextIndex);
+      setIsExpanded(false);
+      setDragOffset(0);
       setIsBusy(false);
     }, 220);
   }
@@ -73,43 +122,22 @@ export function SwipeDeckPanel({
   if (!activeCard) {
     return (
       <section class="panel state-panel">
-        <p class="panel-label">{deckState.freezeMode ? "Paused" : "Daily deck"}</p>
-        <h2>{deckState.doneToday ? "You did your 10." : "No cards in the deck"}</h2>
+        <p class="panel-label">{deckState.freezeMode ? "พักชั่วคราว" : "เด็คประจำวัน"}</p>
+        <h2>{deckState.doneToday ? "คุณทำครบ 10 ใบแล้ว" : "ไม่มีการ์ดในเด็ค"}</h2>
         <p>
           {deckState.freezeMode
-            ? "Aggregate rank is hidden during review mode."
+            ? "อันดับความสนใจถูกซ่อนในโหมดตรวจสอบ"
             : deckState.message ??
               (deckState.doneToday
-                ? "Come back tomorrow for another daily deck."
-                : "The active roster is empty right now.")}
+                ? "กลับมาใหม่พรุ่งนี้สำหรับเด็คประจำวันชุดต่อไป"
+                : "ขณะนี้ยังไม่มีรายชื่อในการ์ด")}
         </p>
       </section>
     );
   }
 
   return (
-    <section class="panel swipe-panel centered-flow-panel">
-      <div class="panel-header">
-        <div>
-          <p class="panel-label">Daily deck</p>
-          <h2>Do your 10</h2>
-        </div>
-        <div class="panel-meta">
-          <span>{remaining} left today</span>
-          <span>Streak {deckState.streakCount}</span>
-        </div>
-      </div>
-
-      <div class="progress-row">
-        <div class="progress-copy">
-          <span>Progress</span>
-          <strong>{progressLabel}</strong>
-        </div>
-        <div class="progress-track" aria-hidden="true">
-          <div class="progress-fill" style={{ width: `${completion}%` }} />
-        </div>
-      </div>
-
+    <section class="swipe-deck-container" style={{ width: 'min(720px, 100%)', margin: '0 auto' }}>
       <div class={`swipe-card-frame ${isBusy ? "is-busy" : ""}`}>
         <div class="bubble-layer" aria-hidden="true">
           {bubbles.map((tone, index) => (
@@ -117,79 +145,211 @@ export function SwipeDeckPanel({
           ))}
         </div>
 
-        <article class="swipe-card">
-          <div class="portrait-shell">
-            <div class="portrait-glow" />
-            <div class="portrait-card">
-              {showImage ? (
-                <img
-                  class="portrait-image"
-                  src={activeCard.imageUrl}
-                  alt=""
-                  loading="eager"
-                  referrerPolicy="no-referrer"
-                  onError={() => {
-                    setFailedImageIds((current) => new Set(current).add(activeCard.id));
-                  }}
-                />
-              ) : (
-                <div class="portrait-avatar">{getInitials(activeCard.displayName)}</div>
-              )}
-              {!showImage ? (
-                <div class="portrait-chart">
-                  <div />
-                  <div />
-                  <div />
-                  <div />
-                  <div />
-                </div>
-              ) : null}
-            </div>
-          </div>
-
-          <div class="swipe-content">
-            <div>
-              <p class="panel-label">Card {activeIndex + 1}</p>
-              <h3>{activeCard.displayName}</h3>
-              <p class="role-line">
-                {activeCard.roleLabel}
-                {activeCard.partyLabel ? ` - ${activeCard.partyLabel}` : ""}
-              </p>
-            </div>
-
-            <a
-              class="read-more-link"
-              href={`https://www.google.com/search?q=${encodeURIComponent(activeCard.searchQuery)}`}
-              target="_blank"
-              rel="noreferrer"
+        {/* Stack rendering: Back card (next), then Front card (active) */}
+        <div class="swipe-stack-container" style={{ position: "relative", height: "65vh", minHeight: "500px", marginTop: "16px" }}>
+          
+          {/* Card 2 (Next in deck) */}
+          {activeIndex + 1 < deckState.cards.length && (
+            <article 
+              key={deckState.cards[activeIndex + 1].id}
+              class="swipe-card swipe-card-behind"
+              style={{
+                position: "absolute",
+                top: 0, left: 0, right: 0, bottom: 0,
+                transform: `scale(${isBusy ? 1 : 0.92}) translateY(${isBusy ? 0 : 24}px)`,
+                opacity: isBusy ? 1 : 0.6,
+                pointerEvents: "none",
+                transition: "all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1)"
+              }}
             >
-              <SearchIcon />
-              Google Search
-              <ChevronRightIcon />
-            </a>
+              {deckState.cards[activeIndex + 1].imageUrl ? (
+                <img class="full-bleed-img" src={deckState.cards[activeIndex + 1].imageUrl} alt="" />
+              ) : (
+                <div class="full-bleed-avatar">{getInitials(deckState.cards[activeIndex + 1].displayName)}</div>
+              )}
+              <div class="card-gradient-overlay" />
+            </article>
+          )}
 
-            <div class="action-row">
-              <button
-                class="deck-button deck-button-research"
-                type="button"
-                onClick={() => handleSwipe("research")}
-                disabled={isBusy}
-              >
-                Research
-              </button>
-              <button
-                class="deck-button deck-button-skip"
-                type="button"
-                onClick={() => handleSwipe("skip")}
-                disabled={isBusy}
-              >
-                Skip
-              </button>
+          {/* Card 1 (Active/Front) */}
+          <article 
+            key={activeCard.id}
+            class="swipe-card swipe-card-front"
+            onPointerDown={handlePointerDown}
+            onPointerMove={handlePointerMove}
+            onPointerUp={handlePointerUp}
+            onPointerCancel={handlePointerUp}
+            style={{
+              position: "absolute",
+              top: 0, left: 0, right: 0, bottom: 0,
+              zIndex: 10,
+              touchAction: "none",
+              cursor: isDragging ? "grabbing" : "grab",
+              transform: isBusy 
+                ? `translate3d(${lastAction === "research" ? "150%" : "-150%"}, 0, 0) rotate(${lastAction === "research" ? 15 : -15}deg)` 
+                : `translate3d(${dragOffset}px, 0, 0) rotate(${dragOffset * 0.05}deg)`,
+              transition: isDragging ? "none" : "transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1)",
+              boxShadow: isDragging ? "0 20px 40px rgba(0,0,0,0.4)" : "none",
+              overflow: "hidden"
+            }}
+          >
+            {/* Full Bleed Image */}
+            {showImage ? (
+              <img
+                class="full-bleed-img"
+                src={activeCard.imageUrl}
+                alt=""
+                loading="eager"
+                referrerPolicy="no-referrer"
+                onError={() => {
+                  setFailedImageIds((current) => new Set(current).add(activeCard.id));
+                }}
+              />
+            ) : (
+              <div class="full-bleed-avatar">{getInitials(activeCard.displayName)}</div>
+            )}
+
+            {/* Gradient for text readability */}
+            <div class="card-gradient-overlay" />
+
+            {/* Visual feedback overlays during drag */}
+            <div 
+              class="swipe-stamp stamp-research"
+              style={{
+                opacity: dragOffset > 20 ? Math.min(dragOffset / dragThreshold, 1) : 0,
+              }}
+            >
+              ค้นคว้า
             </div>
-            {errorMessage ? <p class="inline-error">{errorMessage}</p> : null}
-          </div>
-        </article>
+            <div 
+              class="swipe-stamp stamp-skip"
+              style={{
+                opacity: dragOffset < -20 ? Math.min(Math.abs(dragOffset) / dragThreshold, 1) : 0,
+              }}
+            >
+              ข้าม
+            </div>
+
+            <div class="swipe-content bottom-aligned-content">
+              <div class="card-header-row">
+                <span class="card-badge">การ์ดใบที่ {activeIndex + 1} / {deckState.dailyLimit}</span>
+                <button 
+                  class="icon-btn expand-btn" 
+                  onPointerDown={(e) => e.stopPropagation()} 
+                  onClick={(e) => { e.stopPropagation(); setIsExpanded(!isExpanded); }}
+                >
+                  {isExpanded ? <CloseIcon /> : <InfoIcon />}
+                </button>
+              </div>
+
+              <div class="card-typography">
+                <h3>{activeCard.displayName}</h3>
+                {activeCard.roleLabel && (
+                  <p class="role-line">
+                    {activeCard.roleLabel}
+                    {activeCard.partyLabel ? ` - ${activeCard.partyLabel}` : ""}
+                  </p>
+                )}
+              </div>
+
+              <div class="action-row">
+                <button
+                  class="deck-button deck-button-research"
+                  type="button"
+                  onPointerDown={(e) => e.stopPropagation()}
+                  onClick={(e) => { e.stopPropagation(); handleSwipe("research"); }}
+                  disabled={isBusy}
+                >
+                  ค้นคว้า
+                </button>
+                <button
+                  class="deck-button deck-button-skip"
+                  type="button"
+                  onPointerDown={(e) => e.stopPropagation()}
+                  onClick={(e) => { e.stopPropagation(); handleSwipe("skip"); }}
+                  disabled={isBusy}
+                >
+                  ข้าม
+                </button>
+              </div>
+            </div>
+
+            {/* Drawer */}
+            <div 
+              class="research-drawer"
+              style={{
+                transform: isExpanded ? "translateY(0)" : "translateY(100%)",
+                opacity: isExpanded ? 1 : 0
+              }}
+              onPointerDown={(e) => e.stopPropagation()}
+            >
+              <div class="drawer-header">
+                <h4>สำรวจข้อมูล</h4>
+                <button class="icon-btn" onClick={() => setIsExpanded(false)}><CloseIcon /></button>
+              </div>
+              
+              <a
+                class="search-bar-link"
+                href={`https://www.google.com/search?q=${encodeURIComponent(activeCard.searchQuery)}`}
+                target="_blank"
+                rel="noreferrer"
+              >
+                <GoogleIcon />
+                <span class="search-bar-query">{activeCard.searchQuery}</span>
+                <div class="search-bar-icon-right">
+                  <SearchIcon />
+                </div>
+              </a>
+
+              <div class="search-chips">
+                <a
+                  class="search-chip"
+                  href={`https://www.google.com/search?q=${encodeURIComponent(activeCard.searchQuery + " ประวัติ")}`}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  <SearchIcon /> ประวัติ
+                </a>
+                <a
+                  class="search-chip"
+                  href={`https://www.google.com/search?q=${encodeURIComponent(activeCard.searchQuery + " ข่าวล่าสุด")}`}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  <SearchIcon /> ข่าวล่าสุด
+                </a>
+                <a
+                  class="search-chip"
+                  href={`https://www.google.com/search?q=${encodeURIComponent(activeCard.searchQuery + " นโยบาย")}`}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  <SearchIcon /> นโยบาย
+                </a>
+                <a
+                  class="search-chip"
+                  href={`https://www.google.com/search?q=${encodeURIComponent(activeCard.searchQuery + " การอภิปราย")}`}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  <SearchIcon /> การอภิปราย
+                </a>
+                <a
+                  class="search-chip"
+                  href={`https://www.google.com/search?q=${encodeURIComponent("site:parliamentwatch.wevis.info " + activeCard.searchQuery)}`}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  <SearchIcon /> WeVis ข้อมูลสภา
+                </a>
+              </div>
+            </div>
+
+          </article>
+        </div> {/* End stack container */}
       </div>
+
+      {errorMessage ? <p class="inline-error" style={{ textAlign: "center", marginTop: "16px" }}>{errorMessage}</p> : null}
     </section>
   );
 }

@@ -10,7 +10,7 @@ interface DailyDoneProps {
   onAuthChange: () => Promise<void> | void;
 }
 
-const todayLabel = new Intl.DateTimeFormat("en-US", {
+const todayLabel = new Intl.DateTimeFormat("th-TH", {
   month: "long",
   day: "numeric",
   year: "numeric"
@@ -34,7 +34,7 @@ export function DailyDone({
       const share = await onCreateShare();
       setShareCopy(share.copy);
     } catch (error) {
-      setErrorMessage(error instanceof Error ? error.message : "Share card could not be created.");
+      setErrorMessage(error instanceof Error ? error.message : "ไม่สามารถสร้างการ์ดสำหรับแชร์ได้");
     } finally {
       setIsSharing(false);
     }
@@ -42,22 +42,22 @@ export function DailyDone({
 
   return (
     <section class="panel daily-done">
-      <p class="panel-label">Deck cleared</p>
-      <h1>You did your 10.</h1>
+      <p class="panel-label">เคลียร์เด็คแล้ว</p>
+      <h1>คุณทำครบ 10 ใบแล้ว</h1>
       <p class="done-copy">
-        Your choices stay private and roll up into aggregate curiosity.
-        No public card shows who you researched or skipped.
+        ตัวเลือกของคุณเป็นส่วนตัวและจะถูกนับรวมในความอยากรู้โดยรวม 
+        จะไม่มีการ์ดสาธารณะใดแสดงว่าคุณค้นคว้าหรือข้ามใคร
       </p>
 
       <div class="auth-save-card">
         <div class="auth-save-copy">
-          <span class="panel-label">Share card</span>
-          <strong>{shareCopy || "I researched 10 public figures today. Your turn."}</strong>
-          <p>Send the 10 to group chat without revealing your choices.</p>
+          <span class="panel-label">แชร์การ์ด</span>
+          <strong>{shareCopy || "ฉันค้นคว้าบุคคลสาธารณะ 10 คนวันนี้ ถึงตาคุณแล้ว"}</strong>
+          <p>ส่ง 10 ใบนี้เข้าแชทกลุ่มโดยไม่ต้องเปิดเผยตัวเลือกของคุณ</p>
         </div>
         <div class="auth-save-actions">
           <button class="primary-cta wide" type="button" onClick={handleCreateShare} disabled={isSharing}>
-            {isSharing ? "Creating..." : "Challenge a friend"}
+            {isSharing ? "กำลังสร้าง..." : "ท้าเพื่อน"}
           </button>
           {errorMessage ? <p class="inline-error">{errorMessage}</p> : null}
         </div>
@@ -69,18 +69,18 @@ export function DailyDone({
 
       <div class="done-grid">
         <article class="done-card">
-          <span>Date</span>
+          <span>วันที่</span>
           <strong>{todayLabel}</strong>
         </article>
         <article class="done-card">
-          <span>Streak</span>
-          <strong>{streakCount} days</strong>
+          <span>สตรีค</span>
+          <strong>{streakCount} วัน</strong>
         </article>
       </div>
 
       <div class="done-actions">
         <button class="ghost-cta wide" type="button" onClick={onSeeRankings}>
-          See Research Interest Rank
+          ดูอันดับความสนใจค้นคว้า
         </button>
       </div>
     </section>

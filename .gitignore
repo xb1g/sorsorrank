@@ -4,6 +4,7 @@ node_modules/
 dist/
 dist-backend/
 tmp-screens/
+.env
 .env.local
 .env.*.local
 .supabase-secrets.generated.env

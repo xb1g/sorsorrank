@@ -40,3 +40,6 @@ verify_jwt = false
 
 [functions.cleanup-retention]
 verify_jwt = false
+
+[functions.get-swipe-history]
+verify_jwt = false

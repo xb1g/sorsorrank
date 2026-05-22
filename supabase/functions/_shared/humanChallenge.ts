@@ -37,7 +37,9 @@ export async function verifyHumanChallenge(token: unknown, request: Request) {
 
   const result = (await response.json()) as TurnstileResponse;
   if (!result.success) {
-    throw new HttpError(403, "HumanChallengeFailed", "Human verification failed.");
+    const errorCodes = result["error-codes"]?.join(", ") ?? "unknown";
+    console.error("Turnstile verification failed:", errorCodes);
+    throw new HttpError(403, "HumanChallengeFailed", `Human verification failed: ${errorCodes}`);
   }
 }
 

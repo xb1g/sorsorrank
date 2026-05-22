@@ -1,8 +1,12 @@
 import { useEffect, useState } from "preact/hooks";
 import { ConsentGate } from "./components/ConsentGate";
 import { DailyDone } from "./components/DailyDone";
+import { LoadingScreen } from "./components/LoadingScreen";
+import { PolicyDocument } from "./components/PolicyDocument";
 import { ResearchInterestRank } from "./components/ResearchInterestRank";
 import { SwipeDeckPanel } from "./components/SwipeDeckPanel";
+import { UserProfile } from "./components/UserProfile";
+import { CardsIcon, ChartIcon, UserIcon } from "./components/icons";
 import {
   acceptConsent,
   createCompletionShare,
@@ -14,7 +18,7 @@ import {
 } from "./services/api";
 import type { ConsentState, DeckCard, DeckState, RankingSummary, SwipeAction } from "./types";
 
-type AppView = "consent" | "deck" | "done" | "rankings";
+type AppView = "consent" | "deck" | "done" | "rankings" | "profile" | "privacy" | "terms";
 
 function App() {
   const [rankingSummary, setRankingSummary] = useState<RankingSummary | null>(null);
@@ -109,32 +113,36 @@ function App() {
 
   return (
     <div class="app-shell app-shell-contract">
-      <header class="topbar">
-        <div class="brand-lockup">
-          <div class="brand-mark">S</div>
-          <div>
-            <strong>SorsorRank</strong>
-            <span>Research Interest Rank</span>
+      {view !== "privacy" && view !== "terms" ? (
+        <header class="topbar">
+          <div class="brand-lockup">
+            <img src="/logo.svg" class="brand-logo" alt="SorsorRank Logo" />
+            <div>
+              <strong>SorsorRank</strong>
+              <span>อันดับความสนใจค้นคว้า</span>
+            </div>
           </div>
-        </div>
-        <nav class="topnav">
-          <button
-            class={`nav-chip ${view === "rankings" ? "is-active" : ""}`}
-            type="button"
-            onClick={() => setView("rankings")}
-          >
-            Rank
-          </button>
-        </nav>
-      </header>
+          <nav class="topnav desktop-nav">
+            <button
+              class={`nav-chip ${view === "rankings" ? "is-active" : ""}`}
+              type="button"
+              onClick={() => setView("rankings")}
+            >
+              อันดับ
+            </button>
+            <button
+              class={`nav-chip ${view === "profile" ? "is-active" : ""}`}
+              type="button"
+              onClick={() => setView("profile")}
+            >
+              บัญชี
+            </button>
+          </nav>
+        </header>
+      ) : null}
 
       <main class={view === "deck" || view === "consent" || view === "done" ? "focus-layout" : "content-layout"}>
-        {status === "loading" ? (
-          <section class="panel state-panel">
-            <h2>Loading today's research loop</h2>
-            <p>Checking consent, deck state, and aggregate rank.</p>
-          </section>
-        ) : null}
+        {status === "loading" ? <LoadingScreen /> : null}
 
         {status === "error" ? (
           <section class="panel state-panel error-state">
@@ -143,19 +151,29 @@ function App() {
           </section>
         ) : null}
 
+        {status === "ready" && view === "consent" ? (
+          <ConsentGate
+            consentState={consentState!}
+            turnstileSiteKey={getTurnstileSiteKey()}
+            isAccepting={isAcceptingConsent}
+            errorMessage={flowError}
+            onAccept={handleAcceptConsent}
+            onDecline={() => setView("rankings")}
+            onViewPrivacy={() => setView("privacy")}
+            onViewTerms={() => setView("terms")}
+          />
+        ) : null}
+
+        {status === "ready" && view === "privacy" ? (
+          <PolicyDocument type="privacy" onBack={() => setView(consentState?.hasConsented ? (deckState?.doneToday ? "done" : "deck") : "consent")} />
+        ) : null}
+
+        {status === "ready" && view === "terms" ? (
+          <PolicyDocument type="terms" onBack={() => setView(consentState?.hasConsented ? (deckState?.doneToday ? "done" : "deck") : "consent")} />
+        ) : null}
+
         {status === "ready" && rankingSummary && consentState ? (
           <>
-            {view === "consent" ? (
-              <ConsentGate
-                consentState={consentState}
-                turnstileSiteKey={getTurnstileSiteKey()}
-                isAccepting={isAcceptingConsent}
-                errorMessage={flowError}
-                onAccept={handleAcceptConsent}
-                onDecline={() => setView("rankings")}
-              />
-            ) : null}
-
             {view === "deck" && deckState ? (
               <SwipeDeckPanel
                 deckState={deckState}
@@ -179,9 +197,47 @@ function App() {
                 <ResearchInterestRank rankingSummary={rankingSummary} />
               </div>
             ) : null}
+
+            {view === "profile" ? (
+              <UserProfile
+                consentState={consentState}
+                deckState={deckState}
+                onViewRankings={() => setView("rankings")}
+                onViewDeck={() => setView("deck")}
+              />
+            ) : null}
           </>
         ) : null}
       </main>
+
+      {view !== "privacy" && view !== "terms" ? (
+        <nav class="bottom-tab-bar">
+          <button
+            class={`tab-item ${view === "deck" || view === "done" || view === "consent" ? "is-active" : ""}`}
+            type="button"
+            onClick={() => setView(consentState?.hasConsented ? (deckState?.doneToday ? "done" : "deck") : "consent")}
+          >
+            <CardsIcon />
+            <span>10 ใบ</span>
+          </button>
+          <button
+            class={`tab-item ${view === "rankings" ? "is-active" : ""}`}
+            type="button"
+            onClick={() => setView("rankings")}
+          >
+            <ChartIcon />
+            <span>อันดับ</span>
+          </button>
+          <button
+            class={`tab-item ${view === "profile" ? "is-active" : ""}`}
+            type="button"
+            onClick={() => setView("profile")}
+          >
+            <UserIcon />
+            <span>บัญชี</span>
+          </button>
+        </nav>
+      ) : null}
     </div>
   );
 }

@@ -71,3 +71,19 @@ export interface RecordSwipeResult {
   streakCount?: number;
   duplicate?: boolean;
 }
+
+export interface SwipeHistoryItem {
+  id: string;
+  action: SwipeAction;
+  createdAt: string;
+  displayName: string;
+  roleLabel?: string;
+  partyLabel?: string;
+  searchQuery?: string;
+  imageUrl?: string;
+}
+
+export interface SwipeHistory {
+  date: string;
+  items: SwipeHistoryItem[];
+}

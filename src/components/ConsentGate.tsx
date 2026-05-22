@@ -8,6 +8,8 @@ interface ConsentGateProps {
   errorMessage?: string;
   onAccept: (humanChallengeToken?: string) => void | Promise<void>;
   onDecline: () => void;
+  onViewPrivacy?: () => void;
+  onViewTerms?: () => void;
 }
 
 declare global {
@@ -33,7 +35,9 @@ export function ConsentGate({
   isAccepting,
   errorMessage,
   onAccept,
-  onDecline
+  onDecline,
+  onViewPrivacy,
+  onViewTerms
 }: ConsentGateProps) {
   const challengeRef = useRef<HTMLDivElement>(null);
   const widgetIdRef = useRef<string | null>(null);
@@ -99,29 +103,36 @@ export function ConsentGate({
 
   return (
     <section class="panel consent-gate">
-      <p class="panel-label">Before you start</p>
-      <h1>Do your 10. Research or Skip.</h1>
-      <p class="consent-copy">
-        Your Research and Skip actions are stored only in aggregate. No public card
-        shows your choices, and this is not a poll, endorsement, prediction, or voting guide.
+      <p class="panel-label">ก่อนเริ่มต้น</p>
+      <h1>ทำ 10 ใบ ค้นคว้า หรือ ข้าม</h1>
+      <p class="consent-copy" style={{ marginBottom: '18px', fontSize: '1.1rem' }}>
+        แพลตฟอร์มนี้จัดทำขึ้นเพื่อการค้นคว้าวิจัย และเพื่อความสนุกสนานเท่านั้น 🎉
       </p>
       <div class="consent-meta">
         <span>Consent version {consentState.version}</span>
-        <span>Nothing gets saved until you tap in</span>
         <span>{sessionLabel}</span>
       </div>
       {turnstileSiteKey ? (
         <div class="challenge-box" ref={challengeRef}>
-          {!challengeReady ? <span>Human check required before starting.</span> : null}
+          {!challengeReady ? <span>กรุณายืนยันตัวตนก่อนเริ่มต้น</span> : null}
         </div>
       ) : null}
       {errorMessage ? <p class="inline-error">{errorMessage}</p> : null}
       <div class="consent-actions">
-        <button class="primary-cta wide" type="button" onClick={handleAccept} disabled={acceptDisabled}>
-          {isAccepting ? "Starting..." : "Start my 10"}
+        <button class={`primary-cta wide ${!acceptDisabled ? "pulse" : ""}`} type="button" onClick={handleAccept} disabled={acceptDisabled}>
+          {isAccepting ? "กำลังเริ่ม..." : "เริ่ม 10 ใบของฉัน"}
         </button>
-        <button class="text-link-button" type="button" onClick={onDecline}>
-          Show Research Interest Rank
+        <button class="ghost-cta wide" type="button" onClick={onDecline}>
+          ดูอันดับความสนใจค้นคว้า
+        </button>
+      </div>
+      <div class="policy-links" style={{ textAlign: 'center', marginTop: '16px', fontSize: '0.8rem' }}>
+        <button type="button" class="text-link" onClick={onViewPrivacy} style={{ background: 'none', border: 'none', color: 'var(--text-muted)', textDecoration: 'underline', cursor: 'pointer', margin: '0 8px' }}>
+          นโยบายความเป็นส่วนตัว
+        </button>
+        <span style={{ color: 'var(--text-muted)' }}>|</span>
+        <button type="button" class="text-link" onClick={onViewTerms} style={{ background: 'none', border: 'none', color: 'var(--text-muted)', textDecoration: 'underline', cursor: 'pointer', margin: '0 8px' }}>
+          ข้อกำหนดการใช้งาน
         </button>
       </div>
     </section>

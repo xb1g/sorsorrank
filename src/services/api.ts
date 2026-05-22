@@ -12,7 +12,8 @@ import type {
   Politician,
   RankingSummary,
   RecordSwipeInput,
-  RecordSwipeResult
+  RecordSwipeResult,
+  SwipeHistory
 } from "../types";
 
 const APP_LATENCY_MS = 220;
@@ -22,10 +23,18 @@ const VISITOR_TOKEN_KEY = "sorsorrank-visitor-token";
 const CONSENT_VERSION = "2026-05-20";
 
 const env = (import.meta as unknown as { env?: Record<string, string | undefined> }).env ?? {};
-const configuredApiBase = env.VITE_API_BASE_URL?.replace(/\/$/, "");
-const configuredSupabaseUrl = env.VITE_SUPABASE_URL?.replace(/\/$/, "");
+const configuredApiBase = readConfigValue(env.VITE_API_BASE_URL)?.replace(/\/$/, "");
+const configuredSupabaseUrl = readConfigValue(env.VITE_SUPABASE_URL)?.replace(/\/$/, "");
 const API_BASE_URL = configuredApiBase ?? (configuredSupabaseUrl ? `${configuredSupabaseUrl}/functions/v1` : "");
-const TURNSTILE_SITE_KEY = env.VITE_TURNSTILE_SITE_KEY ?? "";
+const TURNSTILE_SITE_KEY = readConfigValue(env.VITE_TURNSTILE_SITE_KEY) ?? "";
+
+function readConfigValue(value: string | undefined) {
+  const trimmed = value?.trim();
+  if (!trimmed || /^YOUR_/i.test(trimmed) || trimmed.includes("YOUR_PROJECT")) {
+    return undefined;
+  }
+  return trimmed;
+}
 
 function wait(duration: number) {
   return new Promise((resolve) => window.setTimeout(resolve, duration));
@@ -212,6 +221,14 @@ export async function recordSwipe(input: RecordSwipeInput): Promise<RecordSwipeR
     usedToday: 1,
     remaining: 9
   };
+}
+
+export async function fetchSwipeHistory(): Promise<SwipeHistory> {
+  if (backendEnabled()) {
+    return callFunction<SwipeHistory>("get-swipe-history");
+  }
+  await wait(180);
+  return { date: new Date().toISOString().slice(0, 10), items: [] };
 }
 
 export async function createCompletionShare() {

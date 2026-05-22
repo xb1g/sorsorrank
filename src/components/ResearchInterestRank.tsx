@@ -1,5 +1,5 @@
 import type { RankingSummary } from "../types";
-import { SearchIcon } from "./icons";
+import { GoogleIcon, SearchIcon } from "./icons";
 
 interface ResearchInterestRankProps {
   rankingSummary: RankingSummary;
@@ -23,10 +23,10 @@ export function ResearchInterestRank({
   if (rankingSummary.hidden) {
     return (
       <section class="panel rank-panel">
-        <p class="panel-label">Research Interest Rank</p>
-        <h2>Rank is paused</h2>
+        <p class="panel-label">อันดับความสนใจค้นคว้า</p>
+        <h2>หยุดการจัดอันดับชั่วคราว</h2>
         <p class="rank-intro">
-          The Research Interest Rank is paused during a sensitive review period.
+          อันดับความสนใจค้นคว้าหยุดพักชั่วคราวในช่วงที่มีความอ่อนไหว
         </p>
       </section>
     );
@@ -35,10 +35,10 @@ export function ResearchInterestRank({
   if (rankingSummary.politicians.length === 0) {
     return (
       <section class="panel rank-panel">
-        <p class="panel-label">Research Interest Rank</p>
-        <h2>No public rank yet</h2>
+        <p class="panel-label">อันดับความสนใจค้นคว้า</p>
+        <h2>ยังไม่มีอันดับสาธารณะ</h2>
         <p class="rank-intro">
-          Rows stay hidden until enough people do the 10.
+          ข้อมูลจะยังถูกซ่อนไว้จนกว่าจะมีคนทำครบ 10 ใบมากพอ
         </p>
       </section>
     );
@@ -48,25 +48,24 @@ export function ResearchInterestRank({
     <section class="panel rank-panel">
       <div class="panel-header">
         <div>
-          <p class="panel-label">Research Interest Rank</p>
-          <h2>Aggregate curiosity today</h2>
+          <p class="panel-label">อันดับความสนใจค้นคว้า</p>
+          <h2>ความอยากรู้โดยรวมวันนี้</h2>
         </div>
         <div class="panel-meta">
-          <span>{rankingSummary.sampleSize.toLocaleString()} eligible impressions</span>
-          <span>Threshold {rankingSummary.threshold.toLocaleString()}</span>
+          <span>การแสดงผลที่เข้าข่าย {rankingSummary.sampleSize.toLocaleString()} ครั้ง</span>
+          <span>เกณฑ์ขั้นต่ำ {rankingSummary.threshold.toLocaleString()}</span>
         </div>
       </div>
 
       <p class="rank-intro">
-        Aggregate actions only. Research fills the bar; Skip still counts toward
-        the sample. No public row shows individual choices.
+        คำนวณจากข้อมูลรวมเท่านั้น การค้นคว้าจะเพิ่มหลอดคะแนน การข้ามยังคงนับเป็นกลุ่มตัวอย่าง จะไม่มีการแสดงตัวเลือกส่วนบุคคล
       </p>
 
       <div class="rank-list rank-list-side" role="list">
         {rankingSummary.politicians.map((politician, index) => (
           <article key={politician.id} class="rank-row rank-row-side" role="listitem">
-            <div class="rank-order rank-order-plain">
-              <span>{index + 1}</span>
+            <div class="rank-order">
+              <span>#{index + 1}</span>
             </div>
 
             <div class="rank-identity">
@@ -84,7 +83,7 @@ export function ResearchInterestRank({
                 <div class="rank-score-line">
                   <strong>{formatPercent(politician.researchInterestScore)}</strong>
                   <span class="score-subtle">
-                    {politician.researchActions.toLocaleString()} Research actions
+                    ถูกค้นคว้า {politician.researchActions.toLocaleString()} ครั้ง
                   </span>
                 </div>
               </div>
@@ -94,20 +93,23 @@ export function ResearchInterestRank({
               <div class="score-bar" aria-hidden="true">
                 <span style={{ width: `${Math.round(politician.researchInterestScore * 100)}%` }} />
               </div>
-              <span class="score-subtle">{politician.eligibleImpressions.toLocaleString()} impressions</span>
+              <span class="score-subtle">การแสดงผล {politician.eligibleImpressions.toLocaleString()} ครั้ง</span>
             </div>
 
             <div class="rank-actions">
               <a
-                class="table-search-link"
+                class="search-bar-link"
                 href={`https://www.google.com/search?q=${encodeURIComponent(
                   politician.searchQuery ?? politician.displayName
                 )}`}
                 target="_blank"
                 rel="noreferrer"
               >
-                <SearchIcon />
-                Look up
+                <GoogleIcon />
+                <span class="search-bar-query">{politician.searchQuery ?? politician.displayName}</span>
+                <div class="search-bar-icon-right">
+                  <SearchIcon />
+                </div>
               </a>
             </div>
           </article>
