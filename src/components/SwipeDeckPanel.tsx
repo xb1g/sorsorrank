@@ -284,33 +284,33 @@ export function SwipeDeckPanel({
                 </div>
               </div>
 
-              <div class="search-chips" style={{ marginBottom: "20px", marginTop: "8px", pointerEvents: "auto" }}>
+              <div style={{ display: "flex", flexDirection: "column", gap: "8px", marginBottom: "20px", marginTop: "16px", pointerEvents: "auto" }}>
                 <a
-                  class="search-chip"
-                  href={`https://www.google.com/search?q=${encodeURIComponent(activeCard.searchQuery + " ประวัติ")}`}
+                  class="search-bar-link"
+                  href={`https://www.google.com/search?q=${encodeURIComponent(activeCard.searchQuery)}`}
                   target="_blank"
                   rel="noreferrer"
                   onPointerDown={(e) => e.stopPropagation()}
                 >
-                  <SearchIcon /> ประวัติ
+                  <GoogleIcon />
+                  <span class="search-bar-query" style={{ fontSize: "14px" }}>ค้นหาข้อมูลทั่วไปบน Google</span>
+                  <div class="search-bar-icon-right">
+                    <SearchIcon />
+                  </div>
                 </a>
+                
                 <a
-                  class="search-chip"
-                  href={`https://www.google.com/search?q=${encodeURIComponent(activeCard.searchQuery + " ข่าวล่าสุด")}`}
-                  target="_blank"
-                  rel="noreferrer"
-                  onPointerDown={(e) => e.stopPropagation()}
-                >
-                  <SearchIcon /> ข่าวล่าสุด
-                </a>
-                <a
-                  class="search-chip"
+                  class="search-bar-link"
                   href={`https://parliamentwatch.wevis.info/explore?search=${encodeURIComponent(activeCard.displayName)}`}
                   target="_blank"
                   rel="noreferrer"
                   onPointerDown={(e) => e.stopPropagation()}
                 >
-                  <ParliamentWatchIcon /> ผลงาน (WeVis)
+                  <ParliamentWatchIcon />
+                  <span class="search-bar-query" style={{ fontSize: "14px" }}>ดูประวัติการโหวตบน WeVis</span>
+                  <div class="search-bar-icon-right">
+                    <SearchIcon />
+                  </div>
                 </a>
               </div>
 
