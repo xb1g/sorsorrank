@@ -301,7 +301,7 @@ export function SwipeDeckPanel({
                 
                 <a
                   class="search-bar-link"
-                  href={`https://parliamentwatch.wevis.info/explore?search=${encodeURIComponent(activeCard.displayName)}`}
+                  href={`https://www.google.com/search?q=${encodeURIComponent(activeCard.displayName + " site:parliamentwatch.wevis.info")}`}
                   target="_blank"
                   rel="noreferrer"
                   onPointerDown={(e) => e.stopPropagation()}
