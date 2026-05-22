@@ -110,7 +110,7 @@ export function UserIcon() {
 
 export function ParliamentWatchIcon() {
   return (
-    <svg viewBox="-4 -4 32 32" aria-hidden="true" fill="currentColor">
+    <svg viewBox="-4 -4 32 32" aria-hidden="true" fill="currentColor" width="20" height="20">
       <path d="M12 2C6.48 2 2 6.48 2 12h5c0-2.76 2.24-5 5-5s5 2.24 5 5h5c0-5.52-4.48-10-10-10zm0 7c-1.66 0-3 1.34-3 3h6c0-1.66-1.34-3-3-3z" />
     </svg>
   );
