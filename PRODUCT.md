@@ -6,26 +6,26 @@ product
 
 ## Users
 
-Young, online Thai users who follow public affairs through social feeds, arriving in a fast, mobile, group-chat context. Friends who want a low-effort civic conversation starter. They want to finish the daily challenge and share their participation.
+Young, online Thai users who follow public affairs through social feeds, arriving in a fast, mobile, group-chat context. Friends who want a low-effort civic conversation starter. They want to swipe through their Daily Deck, see their Crush Rank, and share the Match Card.
 
 ## Product Purpose
 
-A daily civic research swipe app to make civic curiosity feel lightweight, social, and repeatable. Success means completing the daily 10, sharing neutral completion cards, and driving viral loops via group chat sharing. The core focus is virality through social participation without endorsing political views.
+Tinder for Thai public figures. Swipe to research. See who Thailand is crushing on — intellectually. The core focus is virality through swipe participation and collective curiosity, without endorsing political views or influencing elections.
 
 ## Brand Personality
 
-Fun, viral, cognitively effortless. The interface should feel like an engaging, highly shareable civic game. It leverages UX/UI and cognitive psychology to reduce friction, encourage completion, and reward sharing. Fast, curious, and challenge-oriented.
+Playful, flirty-with-civics, viral. Tinder ergonomics with civic substance underneath. Fast, tactile, and highly shareable. The interface should feel like the most fun your group chat has ever had about public affairs.
 
 ## Anti-references
 
-Boring surveys, dating app clones, campaign posters, prediction markets, approval polls, or anything heavily political or polarizing. Avoid hearts, flames, red/green moral judgment colors, and dark-pattern streak pressure.
+Boring surveys, campaign posters, prediction markets, approval polls, or anything heavily political or polarizing. Avoid electoral endorsement aesthetics, dark-pattern streak pressure, and romantic or sexual framing of individual figures.
 
 ## Design Principles
 
-1. **Frictionless Virality**: Maximize the likelihood of sharing a completed session using clear rewards and cognitive ease.
-2. **Curiosity over Persuasion**: Design for independent research. The UI should prompt curiosity without steering toward political conclusions.
-3. **Participation is Shareable, Preferences are Not**: Viral loops rely on showing completion, not who the user researched or skipped.
-4. **Cognitive Ease**: Reduce decision fatigue. The 10-card deck must feel tactile, fast, and intellectually light.
+1. **Swipe-First Virality**: Match Card and Hot Streak drive completion and group-chat sharing. The swipe mechanic is the product.
+2. **Crush Energy over Persuasion**: Design for independent research. Crush = "I want to know more" not "I support this person." The UI prompts curiosity without steering toward political conclusions.
+3. **Participation is Shareable, Preferences Are Not**: Match Card shows completion, Hot Streak count, and Crush Rank link — never which figures were crushed or passed.
+4. **Cognitive Ease**: Drag, tilt, snap. Daily Deck must feel tactile and intellectually effortless. 10 cards = done in 60 seconds if you want.
 
 ## Accessibility & Inclusion
 

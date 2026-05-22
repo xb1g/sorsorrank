@@ -12,11 +12,11 @@ Default decision: public launch is blocked until Thai counsel approves the exact
 
 ### 1. Sensitive Political Data Risk
 
-Swipes can reveal or infer political opinions. Under the Thai PDPA translation, political opinions are sensitive personal data. The plan must treat `Research`, `Skip`, card impressions, persistent visitor IDs, share events, and future Google-click tracking as sensitive or potentially sensitive.
+Swipes can reveal or infer political opinions. Under the Thai PDPA translation, political opinions are sensitive personal data. The plan must treat `Crush`, `Pass`, card impressions, persistent visitor IDs, share events, and future Google-click tracking as sensitive or potentially sensitive. "Crush" as a product word does not reduce the legal sensitivity of the underlying swipe data.
 
 Hardening:
 
-- Explicit consent before storing any political interaction data.
+- Explicit consent before storing any political interaction data (Crush/Pass swipe events).
 - Withdrawal and deletion path before public launch.
 - No Google-click tracking in MVP.
 - No sale, ads, retargeting, lookalike audiences, or third-party sharing.
@@ -50,8 +50,8 @@ Hosted political claims, summaries, snippets, comments, or accusations would mat
 
 Hardening:
 
-- Cards stay sparse: name, optional role/party, neutral Google link, Research, Skip.
-- No bios, allegations, search snippets, AI summaries, comments, labels, edited images, or user-submitted political text.
+- Cards stay sparse: name, optional role/party, neutral Google link, Crush, Pass.
+- No bios, allegations, search snippets, AI summaries, comments, labels, edited images, romantic/sexual descriptors, or user-submitted political text.
 - Search query is neutral: name plus optional role/party only.
 - Complaint about illegality, defamation, election influence, or monarchy/royal-institution content hides/freezes affected content pending counsel review.
 
@@ -66,27 +66,28 @@ Hardening:
 
 ### 6. Public Ranking Interpretation Risk
 
-The word "rank" is inherently risky in an election context. A threshold reduces manipulation and confusion but does not eliminate legal risk.
+"Crush Rank" is playful but the underlying data is still political opinion inference. A threshold reduces manipulation and confusion but does not eliminate legal risk. Counsel must be briefed on the Tinder framing before public launch.
 
 Hardening:
 
-- Ranking label remains "Research Interest Rank" only.
-- Required disclaimer appears near rankings.
+- Ranking label is "Crush Rank" with required subtitle: "Collective research interest — not a poll or endorsement."
+- Required disclaimer appears near rankings verbatim: "Crush Rank measures research interest, not romantic, sexual, electoral, or moral preference."
 - Minimum default public threshold is 100 eligible consented impressions per figure per ranking period.
 - No demographic, district-level, or micro-geographic ranks.
-- No public ranks in private alpha.
+- No public Crush Rank in private alpha.
 - No active-candidate rows during election windows unless counsel approves exact release.
+- Battle Mode (head-to-head pairs) follows same rules; fully disabled during any election window.
 
 ### 7. Growth Risk
 
-The viral loop can become campaign amplification if share cards reveal names, rankings, or timing around candidates.
+The viral loop can become campaign amplification if Match Cards reveal names, rankings, or timing around candidates. "Tinder for politicians" framing requires active monitoring that users do not interpret Crush Rank as romantic preference, election support, or opposition momentum.
 
 Hardening:
 
-- Completion cards show participation only, never names or actions.
-- Rank snapshots disabled during election freeze and active-candidate rosters.
+- Match Cards show participation only, never names or Crush/Pass history.
+- Crush Rank snapshots disabled during election freeze and active-candidate rosters.
 - No paid traffic, boosted posts, compensated creators, candidate-specific promotion, or targeted ads during election-sensitive periods.
-- Stop public ranking if user screenshots frame the product as support, opposition, voting advice, or candidate momentum.
+- Monitor social screenshots: stop public Crush Rank if users frame the product as support, opposition, voting advice, campaign momentum, or romantic preference for a public figure.
 
 ### 8. Minors Risk
 
@@ -118,7 +119,8 @@ No-go if any are true:
 - Google-click tracking is enabled.
 - Paid or targeted growth is planned.
 - Roster review lacks source URLs, active-candidate flags, election jurisdiction, and two-reviewer approval.
-- Public copy uses banned election, endorsement, approval, prediction, dating, or attack framing outside negative disclaimers.
+- Public copy uses banned terms (vote, endorse, support, approval, prediction, winner, momentum) outside negative disclaimers.
+- UI copy applies romantic or sexual descriptors to any individual figure.
 - Any monarchy, royal-family, or royal-institution content is present.
 
 Go only if all are true:

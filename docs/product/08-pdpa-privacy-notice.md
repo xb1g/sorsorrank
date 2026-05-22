@@ -6,23 +6,23 @@ Status: counsel-review draft. This is product and engineering guidance, not lega
 
 ## Product Position
 
-SorsorRank lets people inspect public figures through a daily research flow and aggregate public-interest signals. If the product collects real swipes about real public figures, those swipes may reveal or infer political opinions. Treat them as sensitive personal data.
+SorsorRank is a daily swipe game for Thai public figures (Tinder-style mechanics, civic substance). If the product collects real swipes ("Crush" or "Pass" actions) about real public figures, those swipes may reveal or infer political opinions. "Crush" is a product label for research curiosity — it does not reduce the legal sensitivity of the underlying data. Treat all swipe interaction data as sensitive personal data.
 
 The PDPA posture is:
 
-- Consent before any swipe storage.
+- Consent before any Crush/Pass swipe storage.
 - Specific, plain-language purpose.
 - No bundled "accept all" wall.
 - No sale, ad targeting, voter targeting, or lookalike audiences.
 - Short raw-event retention.
 - Easy withdrawal and deletion request path.
-- Public output is aggregate only.
+- Public output is aggregate only (Crush Rank, Match %).
 
 ## User-Facing Privacy Notice Draft
 
 ### Short Notice
 
-SorsorRank uses your swipes only to create aggregate research-interest signals about public figures. Your Research and Skip choices may reveal political opinions, which can be sensitive personal data.
+SorsorRank uses your swipes only to create aggregate Crush Rank signals about public figures. Your Crush and Pass choices may reveal political opinions, which can be sensitive personal data. "Crush" means you chose to research this person — it does not imply romantic, sexual, or political preference.
 
 We do not sell your swipe data, use it for ad targeting, show your individual history publicly, or require you to agree to optional tracking to read our methodology or contact us.
 
@@ -52,7 +52,7 @@ After you agree and start swiping:
 - Pseudonymous visitor key.
 - Consent version and privacy-notice version.
 - Card impressions needed to count your daily 10.
-- Research or Skip action.
+- Crush or Pass action (research interest signal — "Crush" means chose to research, not romantic or political preference).
 - Card impression id and idempotency key to prevent duplicate counts.
 - Timestamp and date.
 - Short-retention rate-limit data.

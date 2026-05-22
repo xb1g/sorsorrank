@@ -40,10 +40,11 @@ Public launch is blocked until all are true:
 
 SorsorRank must be framed as:
 
-- Research interest.
-- Daily curiosity.
-- Aggregate participation.
+- Research interest ("Crush" = chose to look this person up).
+- Daily curiosity game.
+- Aggregate participation signal.
 - Not a poll or endorsement.
+- Not romantic or sexual preference.
 
 SorsorRank must not be framed as:
 
@@ -55,6 +56,7 @@ SorsorRank must not be framed as:
 - Odds.
 - Campaigning.
 - Momentum, winning, or leading.
+- Romantic or sexual preference for any public figure.
 
 The word "vote" is allowed only in negative disclaimers or methodology, such as "not vote intent" or "not a voting guide." It must not appear in CTAs, share cards, button labels, rank labels, or growth copy.
 
@@ -67,7 +69,7 @@ Requirements:
 - Explicit consent before storing swipes, persistent visitor identifiers, share events, Google-click events, or any political interaction data.
 - Consent must be specific, informed, withdrawable, logged by version, and not bundled with marketing.
 - Plain privacy notice before collection, including purpose, retention, recipients, cross-border transfers, rights, and contact path.
-- Purpose limitation: aggregate research-interest ranking and abuse prevention only.
+- Purpose limitation: aggregate Crush Rank (research-interest ranking) and abuse prevention only.
 - Data minimization: do not collect names, phone numbers, emails, precise location, device fingerprints, or social IDs for swiping.
 - No sale, ad targeting, voter targeting, lookalike audiences, or third-party sharing of political interaction data.
 - No public user-level political profiles or per-user history exports.
@@ -108,8 +110,9 @@ Allowed:
 - Name.
 - Optional role/party for disambiguation.
 - Neutral Google Search link.
-- Aggregate research-interest rank if not frozen and above threshold.
-- Methodology.
+- Aggregate Crush Rank (research interest) if not frozen and above threshold.
+- Match % if not frozen and above threshold, with "not a poll" label.
+- Methodology ("How Crush Rank works").
 
 Operational controls:
 
@@ -189,30 +192,44 @@ Banned in public UI/share/growth copy except negative disclaimers or methodology
 - approval
 - odds
 - prediction
-- hot
-- match
-- crush
+- momentum
+- romantic or sexual descriptors applied to any individual figure
 
-Required disclaimer near rankings:
+The following are **allowed** in product copy (Tinder-framing pivot):
 
-> Research Interest Rank is an aggregate curiosity signal. It is not a poll, endorsement, prediction, approval rating, or voting guide.
+- crush (action name — means "chose to research")
+- pass (action name — means "skip")
+- match % (per-figure aggregate)
+- match card (completion share artifact)
+- hot streak (consecutive daily deck count)
+- hearts and flames in UI iconography
+
+Required disclaimer near Crush Rank:
+
+> Crush Rank is an aggregate research-interest signal. "Crush" means the user chose to look this person up — not romantic, sexual, electoral, or moral preference. This is not a poll, endorsement, prediction, approval rating, or voting guide.
+
+Required disclaimer on Match %:
+
+> "X% of today's swipers chose to research this person — not a poll or endorsement."
 
 ## Launch Checklist
 
-- Counsel reviewed exact copy and flow.
+- Counsel reviewed exact copy and flow (including Crush Rank, Match %, Match Card, and Battle Mode framing).
 - Consent screen approved.
 - Privacy notice live.
 - Data-subject request path live.
-- Methodology page live.
+- Methodology page ("How Crush Rank works") live; includes verbatim line: "Crush Rank measures research interest, not romantic, sexual, electoral, or moral preference."
 - Contact/takedown page live.
 - DPO or DPO-equivalent owner assigned.
 - Vendor and cross-border review complete.
-- Freeze mode tested.
+- Freeze mode tested end-to-end (hides Crush Rank, Match %, Battle Mode, Match Card Crush Rank link).
+- Battle Mode disabled flag confirmed for election windows.
 - Raw retention cleanup tested.
 - Security-log retention separated from swipe analytics.
-- Share cards reviewed.
+- Match Cards reviewed for banned terms.
 - Roster reviewed by two reviewers.
-- Minimum sample threshold configured.
+- Minimum sample threshold configured and tested for Crush Rank and Match %.
 - Election calendar reviewed for all roster jurisdictions.
 - Active-candidate and election-window flags tested.
 - Public copy checked for banned terms.
+- Monarch/royal-institution exclusion verified in roster.

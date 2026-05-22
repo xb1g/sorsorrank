@@ -1,6 +1,6 @@
 # Product Docs: SorsorRank
 
-SorsorRank is a fun, viral swipe app for civic research. The product center is simple: 10 daily swipes, one-tap Google research, shareable completion moments, and aggregate research-interest ranks.
+SorsorRank is Tinder for Thai public figures. The core mechanic: Daily Deck of 10 swipes (Crush or Pass), one-tap Google research, Match Card share moment, and aggregate Crush Rank.
 
 These docs are split by job:
 
@@ -16,8 +16,8 @@ These docs are split by job:
 10. [PDPA Privacy Notice and Consent Draft](08-pdpa-privacy-notice.md) - user-facing PDPA copy and implementation requirements.
 11. [Supabase Auth Decision](11-supabase-auth.md) - anonymous Auth sessions, JWT handling, and product boundaries.
 
-Core decision: use the lightweight viral product shape, but keep the strongest compliance controls from the heavier plan.
+Core decision: Tinder ergonomics for virality, strongest compliance controls for safety. Both are non-negotiable.
 
-Public framing: **research-interest ranker**, not a poll, endorsement, election forecast, or voting guide.
+Public framing: **Crush Rank** — collective research interest, not a poll, endorsement, election forecast, or voting guide. "Crush" = research curiosity, not romance or political support.
 
 Compliance posture: these docs reduce risk but are not legal advice and cannot guarantee legality. Public launch, active-candidate coverage, paid promotion, or Thailand-targeted growth require Thai counsel review of the exact product, roster, copy, data flows, vendors, and timing.

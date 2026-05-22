@@ -13,10 +13,10 @@ Accounts must not become public political profiles. The Auth user exists to give
 
 ## Why Anonymous First
 
-- It keeps the consent-first daily 10 flow low-friction.
+- It keeps the consent-first Daily Deck flow low-friction (Tinder-style: open and swipe, no signup wall).
 - It avoids collecting email, phone, or social identity for a sensitive civic interaction.
 - It lets Edge Functions verify a Supabase Auth JWT instead of trusting client-generated visitor IDs.
-- It preserves the existing server-side consent, deck, swipe, ranking, and share function boundaries.
+- It preserves the existing server-side consent, deck, swipe, Crush Rank, and share function boundaries.
 
 ## Account Creation
 
@@ -68,4 +68,4 @@ Supabase project setup:
 
 ## Product Boundary
 
-User-facing framing should remain consent, privacy, daily research participation, and aggregate curiosity. Account copy should be limited to returning to the same streak/session.
+User-facing framing: consent, privacy, Daily Deck participation, and Crush Rank. Account copy is limited to "return to your Hot Streak and Daily Deck." No political profiles, preference history, or Crush/Pass history exposed per-user.

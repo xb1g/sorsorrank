@@ -151,8 +151,33 @@ Deno.serve(async (request) => {
       impressionByPoliticianId.set(impression.politician_id, impression.id);
     }
 
-    const cards = (activePoliticians ?? [])
-      .filter((politician) => impressionByPoliticianId.has(politician.id))
+    const issuedPoliticianIds = Array.from(impressionByPoliticianId.keys());
+    let deckPoliticians: any[] = [];
+    if (issuedPoliticianIds.length > 0) {
+      const { data: fetchedPoliticians, error: fetchError } = await supabase
+        .from("politicians")
+        .select("id,display_name,role_label,party_label,search_query,image_url,image_source_url,info_source_url,featured_priority")
+        .in("id", issuedPoliticianIds);
+      
+      if (fetchError) {
+        throw fetchError;
+      }
+      deckPoliticians = fetchedPoliticians ?? [];
+    }
+
+    // Sort to match priority order: featured_priority asc (nulls last), then display_name or id
+    deckPoliticians.sort((a, b) => {
+      const ap = a.featured_priority;
+      const bp = b.featured_priority;
+      if (ap !== bp) {
+        if (ap === null) return 1;
+        if (bp === null) return -1;
+        return ap - bp;
+      }
+      return b.id.localeCompare(a.id);
+    });
+
+    const cards = deckPoliticians
       .slice(0, needed)
       .map((politician) => ({
         id: politician.id,
