@@ -1,6 +1,6 @@
 import { useMemo, useState, useRef } from "preact/hooks";
 import type { DeckCard, DeckState, SwipeAction } from "../types";
-import { GoogleIcon, SearchIcon } from "./icons";
+import { GoogleIcon, SearchIcon, ParliamentWatchIcon } from "./icons";
 import { LoadingScreen } from "./LoadingScreen";
 
 const InfoIcon = () => (
@@ -265,12 +265,53 @@ export function SwipeDeckPanel({
 
               <div class="card-typography">
                 <h3>{activeCard.displayName}</h3>
-                {activeCard.roleLabel && (
-                  <p class="role-line">
-                    {activeCard.roleLabel}
-                    {activeCard.partyLabel ? ` - ${activeCard.partyLabel}` : ""}
-                  </p>
-                )}
+                <div style={{ display: "flex", gap: "6px", flexWrap: "wrap", marginTop: "8px" }}>
+                  {activeCard.partyLabel && (
+                    <span style={{ padding: "4px 10px", background: "rgba(255,255,255,0.15)", borderRadius: "100px", fontSize: "13px", fontWeight: "500", backdropFilter: "blur(4px)" }}>
+                      {activeCard.partyLabel}
+                    </span>
+                  )}
+                  {activeCard.roleLabel?.includes("แบ่งเขต") && activeCard.roleLabel.split(" - ")[2] && (
+                    <span style={{ padding: "4px 10px", background: "rgba(255,255,255,0.15)", borderRadius: "100px", fontSize: "13px", fontWeight: "500", backdropFilter: "blur(4px)" }}>
+                      📍 จ.{activeCard.roleLabel.split(" - ")[2]}
+                    </span>
+                  )}
+                  {activeCard.roleLabel?.includes("บัญชีรายชื่อ") && (
+                    <span style={{ padding: "4px 10px", background: "rgba(255,255,255,0.15)", borderRadius: "100px", fontSize: "13px", fontWeight: "500", backdropFilter: "blur(4px)" }}>
+                      บัญชีรายชื่อ
+                    </span>
+                  )}
+                </div>
+              </div>
+
+              <div class="search-chips" style={{ marginBottom: "20px", marginTop: "8px", pointerEvents: "auto" }}>
+                <a
+                  class="search-chip"
+                  href={`https://www.google.com/search?q=${encodeURIComponent(activeCard.searchQuery + " ประวัติ")}`}
+                  target="_blank"
+                  rel="noreferrer"
+                  onPointerDown={(e) => e.stopPropagation()}
+                >
+                  <SearchIcon /> ประวัติ
+                </a>
+                <a
+                  class="search-chip"
+                  href={`https://www.google.com/search?q=${encodeURIComponent(activeCard.searchQuery + " ข่าวล่าสุด")}`}
+                  target="_blank"
+                  rel="noreferrer"
+                  onPointerDown={(e) => e.stopPropagation()}
+                >
+                  <SearchIcon /> ข่าวล่าสุด
+                </a>
+                <a
+                  class="search-chip"
+                  href={`https://parliamentwatch.wevis.info/explore?search=${encodeURIComponent(activeCard.displayName)}`}
+                  target="_blank"
+                  rel="noreferrer"
+                  onPointerDown={(e) => e.stopPropagation()}
+                >
+                  <ParliamentWatchIcon /> ผลงาน (WeVis)
+                </a>
               </div>
 
               <div class="action-row">
