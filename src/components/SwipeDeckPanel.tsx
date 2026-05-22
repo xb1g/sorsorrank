@@ -150,7 +150,7 @@ export function SwipeDeckPanel({
 
     return (
       <section class="panel state-panel">
-        <p class="panel-label">{deckState.freezeMode ? "พักชั่วคราว" : "10 ใบประจำวัน"}</p>
+        <p class="panel-label">{deckState.freezeMode ? "พักชั่วคราว" : "Daily Deck"}</p>
         <h2>{stateTitle}</h2>
         {stateMessage ? <p>{stateMessage}</p> : null}
       </section>
@@ -240,7 +240,7 @@ export function SwipeDeckPanel({
                 opacity: dragOffset > 20 ? Math.min(dragOffset / dragThreshold, 1) : 0,
               }}
             >
-              ได้รู้เรื่องใหม่
+              Crush
             </div>
             <div 
               class="swipe-stamp stamp-skip"
@@ -248,7 +248,7 @@ export function SwipeDeckPanel({
                 opacity: dragOffset < -20 ? Math.min(Math.abs(dragOffset) / dragThreshold, 1) : 0,
               }}
             >
-              รู้จักอยู่แล้ว
+              Pass
             </div>
 
             <div class="swipe-content bottom-aligned-content">
@@ -281,7 +281,7 @@ export function SwipeDeckPanel({
                   onClick={(e) => { e.stopPropagation(); handleSwipe("research"); }}
                   disabled={isBusy}
                 >
-                  ได้รู้เรื่องใหม่
+                  Crush
                 </button>
                 <button
                   class="deck-button deck-button-skip"
@@ -290,7 +290,7 @@ export function SwipeDeckPanel({
                   onClick={(e) => { e.stopPropagation(); handleSwipe("skip"); }}
                   disabled={isBusy}
                 >
-                  รู้จักอยู่แล้ว
+                  Pass
                 </button>
               </div>
             </div>

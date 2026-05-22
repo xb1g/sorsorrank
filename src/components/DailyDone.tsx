@@ -51,9 +51,9 @@ export function DailyDone({
         </div>
         
         <p class="account-desc-sharp" style={{ marginTop: "8px" }}>
-          คุณทำครบ 10 ใบแล้ว<br />
+          คุณทำ Daily Deck ของวันนี้ครบแล้ว<br />
           ตัวเลือกของคุณเป็นส่วนตัวและจะถูกนับรวมในความอยากรู้โดยรวม
-          จะไม่มีการ์ดสาธารณะใดแสดงว่าคุณได้รู้เรื่องใหม่หรือข้ามใคร
+          จะไม่มีใครเห็นว่าคุณ Crush หรือ Pass ใคร
         </p>
 
         <div class="profile-raw-stats" style={{ marginTop: "16px" }}>
@@ -73,7 +73,7 @@ export function DailyDone({
 
         <div class="profile-hero-actions">
           <button class="ghost-cta sharp-cta wide" type="button" onClick={onSeeRankings}>
-            ดูดัชนีการค้นพบใหม่
+            ดู Crush Rank
           </button>
         </div>
       </div>
