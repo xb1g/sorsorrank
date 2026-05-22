@@ -51,7 +51,7 @@ export function ResearchInterestRank({ rankingSummary }: ResearchInterestRankPro
         </div>
         
         <p class="account-desc-sharp" style={{ marginTop: "8px" }}>
-          คำนวณจากข้อมูลรวมเท่านั้น การค้นคว้าจะเพิ่มหลอดคะแนน การข้ามยังคงนับเป็นกลุ่มตัวอย่าง 
+          คำนวณจากข้อมูลรวมเท่านั้น การสนใจจะเพิ่มหลอดคะแนน การข้ามยังคงนับเป็นกลุ่มตัวอย่าง 
           จะไม่มีการแสดงตัวเลือกส่วนบุคคล
         </p>
 
@@ -93,7 +93,7 @@ export function ResearchInterestRank({ rankingSummary }: ResearchInterestRankPro
                 <div class="rank-score-block">
                   <strong class="rank-percent">{formatPercent(politician.researchInterestScore)}</strong>
                   <span class="rank-details">
-                    ค้นคว้า {politician.researchActions.toLocaleString()} / {politician.eligibleImpressions.toLocaleString()}
+                    สนใจ {politician.researchActions.toLocaleString()} / {politician.eligibleImpressions.toLocaleString()}
                   </span>
                 </div>
                 

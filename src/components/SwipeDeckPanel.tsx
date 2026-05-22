@@ -129,7 +129,7 @@ export function SwipeDeckPanel({
         <section class="panel state-panel">
           <p class="panel-label">10 ใบประจำวัน</p>
           <h2>สำรวจครบทั้งหมดแล้ว</h2>
-          <p>คุณได้สำรวจนักการเมืองที่มีในระบบ ณ ขณะนี้ทั้งหมดแล้ว! ขอบคุณที่ร่วมค้นคว้าวิจัยประชาธิปไตยกับเรา คุณสามารถติดตามอันดับความสนใจหรือกลับมาใหม่ในวันพรุ่งนี้</p>
+          <p>คุณได้สำรวจนักการเมืองที่มีในระบบ ณ ขณะนี้ทั้งหมดแล้ว! ขอบคุณที่ร่วมวิจัยประชาธิปไตยกับเรา คุณสามารถติดตามอันดับความสนใจหรือกลับมาใหม่ในวันพรุ่งนี้</p>
           <button class="btn btn-primary" type="button" onClick={onComplete} style={{ marginTop: "24px" }}>
             ดูผลสรุปวันนี้
           </button>
@@ -240,7 +240,7 @@ export function SwipeDeckPanel({
                 opacity: dragOffset > 20 ? Math.min(dragOffset / dragThreshold, 1) : 0,
               }}
             >
-              ค้นคว้า
+              สนใจ
             </div>
             <div 
               class="swipe-stamp stamp-skip"
@@ -281,7 +281,7 @@ export function SwipeDeckPanel({
                   onClick={(e) => { e.stopPropagation(); handleSwipe("research"); }}
                   disabled={isBusy}
                 >
-                  ค้นคว้า
+                  สนใจ
                 </button>
                 <button
                   class="deck-button deck-button-skip"

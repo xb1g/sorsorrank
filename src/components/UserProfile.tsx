@@ -122,7 +122,7 @@ export function UserProfile({ consentState, deckState, onViewRankings, onViewDec
           <span class="history-meta">
             {historyLoading
               ? "กำลังโหลด..."
-              : `ค้นคว้า ${researchCount} · ข้าม ${skipCount} · รวม ${history?.length ?? 0}`}
+              : `สนใจ ${researchCount} · ข้าม ${skipCount} · รวม ${history?.length ?? 0}`}
           </span>
         </div>
 
@@ -150,7 +150,7 @@ export function UserProfile({ consentState, deckState, onViewRankings, onViewDec
                 </div>
                 <div class="history-action-sharp">
                   <span class={`history-badge-sharp is-${item.action}`}>
-                    {item.action === "research" ? "ค้นคว้า" : "ข้าม"}
+                    {item.action === "research" ? "สนใจ" : "ข้าม"}
                   </span>
                 </div>
               </div>

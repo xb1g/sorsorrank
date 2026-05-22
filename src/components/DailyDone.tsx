@@ -53,7 +53,7 @@ export function DailyDone({
         <p class="account-desc-sharp" style={{ marginTop: "8px" }}>
           คุณทำครบ 10 ใบแล้ว<br />
           ตัวเลือกของคุณเป็นส่วนตัวและจะถูกนับรวมในความอยากรู้โดยรวม
-          จะไม่มีการ์ดสาธารณะใดแสดงว่าคุณค้นคว้าหรือข้ามใคร
+          จะไม่มีการ์ดสาธารณะใดแสดงว่าคุณสนใจหรือข้ามใคร
         </p>
 
         <div class="profile-raw-stats" style={{ marginTop: "16px" }}>
