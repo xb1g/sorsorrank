@@ -240,7 +240,7 @@ export function SwipeDeckPanel({
                 opacity: dragOffset > 20 ? Math.min(dragOffset / dragThreshold, 1) : 0,
               }}
             >
-              สนใจ
+              ได้รู้เรื่องใหม่
             </div>
             <div 
               class="swipe-stamp stamp-skip"
@@ -248,7 +248,7 @@ export function SwipeDeckPanel({
                 opacity: dragOffset < -20 ? Math.min(Math.abs(dragOffset) / dragThreshold, 1) : 0,
               }}
             >
-              ข้าม
+              รู้จักอยู่แล้ว
             </div>
 
             <div class="swipe-content bottom-aligned-content">
@@ -281,7 +281,7 @@ export function SwipeDeckPanel({
                   onClick={(e) => { e.stopPropagation(); handleSwipe("research"); }}
                   disabled={isBusy}
                 >
-                  สนใจ
+                  ได้รู้เรื่องใหม่
                 </button>
                 <button
                   class="deck-button deck-button-skip"
@@ -290,7 +290,7 @@ export function SwipeDeckPanel({
                   onClick={(e) => { e.stopPropagation(); handleSwipe("skip"); }}
                   disabled={isBusy}
                 >
-                  ข้าม
+                  รู้จักอยู่แล้ว
                 </button>
               </div>
             </div>

@@ -18,7 +18,7 @@ export function ResearchInterestRank({ rankingSummary }: ResearchInterestRankPro
             <h2 class="profile-hero-title">หยุดการจัดอันดับ</h2>
           </div>
           <p class="account-desc-sharp" style={{ marginTop: "8px" }}>
-            อันดับความสนใจค้นคว้าหยุดพักชั่วคราวในช่วงที่มีความอ่อนไหว
+            ดัชนีการค้นพบใหม่หยุดพักชั่วคราวในช่วงที่มีความอ่อนไหว
           </p>
         </div>
       </div>
@@ -44,14 +44,14 @@ export function ResearchInterestRank({ rankingSummary }: ResearchInterestRankPro
     <div class="content-column rank-brutalist">
       <div class="rank-hero">
         <div class="profile-title-row">
-          <h2 class="profile-hero-title">อันดับความอยากรู้</h2>
+          <h2 class="profile-hero-title">ดัชนีการค้นพบใหม่</h2>
           <span class="profile-auth-status">
             ล่าสุด: {new Date(rankingSummary.generatedAt).toLocaleDateString("th-TH")}
           </span>
         </div>
         
         <p class="account-desc-sharp" style={{ marginTop: "8px" }}>
-          คำนวณจากข้อมูลรวมเท่านั้น การสนใจจะเพิ่มหลอดคะแนน การข้ามยังคงนับเป็นกลุ่มตัวอย่าง 
+          คำนวณจากข้อมูลรวมเท่านั้น การได้รู้เรื่องใหม่จะเพิ่มหลอดคะแนน การข้ามยังคงนับเป็นกลุ่มตัวอย่าง 
           จะไม่มีการแสดงตัวเลือกส่วนบุคคล
         </p>
 
@@ -93,7 +93,7 @@ export function ResearchInterestRank({ rankingSummary }: ResearchInterestRankPro
                 <div class="rank-score-block">
                   <strong class="rank-percent">{formatPercent(politician.researchInterestScore)}</strong>
                   <span class="rank-details">
-                    สนใจ {politician.researchActions.toLocaleString()} / {politician.eligibleImpressions.toLocaleString()}
+                    รู้เรื่องใหม่ {politician.researchActions.toLocaleString()} / {politician.eligibleImpressions.toLocaleString()}
                   </span>
                 </div>
                 

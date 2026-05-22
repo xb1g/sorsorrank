@@ -53,7 +53,7 @@ export function DailyDone({
         <p class="account-desc-sharp" style={{ marginTop: "8px" }}>
           คุณทำครบ 10 ใบแล้ว<br />
           ตัวเลือกของคุณเป็นส่วนตัวและจะถูกนับรวมในความอยากรู้โดยรวม
-          จะไม่มีการ์ดสาธารณะใดแสดงว่าคุณสนใจหรือข้ามใคร
+          จะไม่มีการ์ดสาธารณะใดแสดงว่าคุณได้รู้เรื่องใหม่หรือข้ามใคร
         </p>
 
         <div class="profile-raw-stats" style={{ marginTop: "16px" }}>
@@ -73,7 +73,7 @@ export function DailyDone({
 
         <div class="profile-hero-actions">
           <button class="ghost-cta sharp-cta wide" type="button" onClick={onSeeRankings}>
-            ดูอันดับความสนใจค้นคว้า
+            ดูดัชนีการค้นพบใหม่
           </button>
         </div>
       </div>

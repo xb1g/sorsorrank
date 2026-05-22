@@ -103,7 +103,7 @@ export function UserProfile({ consentState, deckState, onViewRankings, onViewDec
             </div>
           )}
           <button class="ghost-cta sharp-cta wide" style={{ marginTop: "12px" }} type="button" onClick={onViewRankings}>
-            ดูอันดับความสนใจค้นคว้า
+            ดูดัชนีการค้นพบใหม่
           </button>
         </div>
       </div>
@@ -122,7 +122,7 @@ export function UserProfile({ consentState, deckState, onViewRankings, onViewDec
           <span class="history-meta">
             {historyLoading
               ? "กำลังโหลด..."
-              : `สนใจ ${researchCount} · ข้าม ${skipCount} · รวม ${history?.length ?? 0}`}
+              : `รู้เรื่องใหม่ ${researchCount} · รู้จักแล้ว ${skipCount} · รวม ${history?.length ?? 0}`}
           </span>
         </div>
 
@@ -150,7 +150,7 @@ export function UserProfile({ consentState, deckState, onViewRankings, onViewDec
                 </div>
                 <div class="history-action-sharp">
                   <span class={`history-badge-sharp is-${item.action}`}>
-                    {item.action === "research" ? "สนใจ" : "ข้าม"}
+                    {item.action === "research" ? "รู้เรื่องใหม่" : "รู้จักแล้ว"}
                   </span>
                 </div>
               </div>
