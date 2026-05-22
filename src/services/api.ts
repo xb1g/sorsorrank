@@ -104,6 +104,12 @@ async function callFunction<T>(
 export async function fetchRankingSummary(): Promise<RankingSummary> {
   if (backendEnabled()) {
     const response = await callFunction<BackendRankingResponse>("get-rankings");
+    // Bypass hidden state for local development testing
+    const envObj = (import.meta as unknown as { env?: { DEV?: boolean } }).env;
+    if (response.hidden && envObj?.DEV) {
+      console.warn("API returned hidden: true. Bypassing with mock data in DEV mode.");
+      return rankingSummary;
+    }
     return mapRankingResponse(response);
   }
 

@@ -1,5 +1,5 @@
 import type { RankingSummary } from "../types";
-import { GoogleIcon, SearchIcon } from "./icons";
+import { SearchIcon } from "./icons";
 
 interface ResearchInterestRankProps {
   rankingSummary: RankingSummary;
@@ -9,112 +9,121 @@ function formatPercent(score: number) {
   return `${Math.round(score * 100)}%`;
 }
 
-function getInitials(displayName: string) {
-  return displayName
-    .split(" ")
-    .slice(0, 2)
-    .map((segment) => segment[0])
-    .join("");
-}
-
-export function ResearchInterestRank({
-  rankingSummary
-}: ResearchInterestRankProps) {
+export function ResearchInterestRank({ rankingSummary }: ResearchInterestRankProps) {
   if (rankingSummary.hidden) {
     return (
-      <section class="panel rank-panel">
-        <p class="panel-label">อันดับความสนใจค้นคว้า</p>
-        <h2>หยุดการจัดอันดับชั่วคราว</h2>
-        <p class="rank-intro">
-          อันดับความสนใจค้นคว้าหยุดพักชั่วคราวในช่วงที่มีความอ่อนไหว
-        </p>
-      </section>
+      <div class="content-column rank-brutalist">
+        <div class="rank-hero">
+          <div class="profile-title-row">
+            <h2 class="profile-hero-title">หยุดการจัดอันดับ</h2>
+          </div>
+          <p class="account-desc-sharp" style={{ marginTop: "8px" }}>
+            อันดับความสนใจค้นคว้าหยุดพักชั่วคราวในช่วงที่มีความอ่อนไหว
+          </p>
+        </div>
+      </div>
     );
   }
 
   if (rankingSummary.politicians.length === 0) {
     return (
-      <section class="panel rank-panel">
-        <p class="panel-label">อันดับความสนใจค้นคว้า</p>
-        <h2>ยังไม่มีอันดับสาธารณะ</h2>
-        <p class="rank-intro">
-          ข้อมูลจะยังถูกซ่อนไว้จนกว่าจะมีคนทำครบ 10 ใบมากพอ
-        </p>
-      </section>
+      <div class="content-column rank-brutalist">
+        <div class="rank-hero">
+          <div class="profile-title-row">
+            <h2 class="profile-hero-title">ยังไม่มีอันดับสาธารณะ</h2>
+          </div>
+          <p class="account-desc-sharp" style={{ marginTop: "8px" }}>
+            ข้อมูลจะยังถูกซ่อนไว้จนกว่าจะมีคนทำครบ 10 ใบมากพอ
+          </p>
+        </div>
+      </div>
     );
   }
 
   return (
-    <section class="panel rank-panel">
-      <div class="panel-header">
-        <div>
-          <p class="panel-label">อันดับความสนใจค้นคว้า</p>
-          <h2>ความอยากรู้โดยรวมวันนี้</h2>
+    <div class="content-column rank-brutalist">
+      <div class="rank-hero">
+        <div class="profile-title-row">
+          <h2 class="profile-hero-title">อันดับความอยากรู้</h2>
+          <span class="profile-auth-status">
+            ล่าสุด: {new Date(rankingSummary.generatedAt).toLocaleDateString("th-TH")}
+          </span>
         </div>
-        <div class="panel-meta">
-          <span>การแสดงผลที่เข้าข่าย {rankingSummary.sampleSize.toLocaleString()} ครั้ง</span>
-          <span>เกณฑ์ขั้นต่ำ {rankingSummary.threshold.toLocaleString()}</span>
+        
+        <p class="account-desc-sharp" style={{ marginTop: "8px" }}>
+          คำนวณจากข้อมูลรวมเท่านั้น การค้นคว้าจะเพิ่มหลอดคะแนน การข้ามยังคงนับเป็นกลุ่มตัวอย่าง 
+          จะไม่มีการแสดงตัวเลือกส่วนบุคคล
+        </p>
+
+        <div class="rank-meta" style={{ marginTop: "24px" }}>
+          <div class="raw-stat">
+            <span class="raw-label">การแสดงผลรวม</span>
+            <strong class="raw-value" style={{ fontSize: "clamp(1.5rem, 5vw, 2.5rem)" }}>
+              {rankingSummary.sampleSize.toLocaleString()}
+            </strong>
+          </div>
+          <div class="raw-stat">
+            <span class="raw-label">เกณฑ์ขั้นต่ำต่อคน</span>
+            <strong class="raw-value" style={{ fontSize: "clamp(1.5rem, 5vw, 2.5rem)" }}>
+              {rankingSummary.threshold.toLocaleString()}
+            </strong>
+          </div>
         </div>
       </div>
 
-      <p class="rank-intro">
-        คำนวณจากข้อมูลรวมเท่านั้น การค้นคว้าจะเพิ่มหลอดคะแนน การข้ามยังคงนับเป็นกลุ่มตัวอย่าง จะไม่มีการแสดงตัวเลือกส่วนบุคคล
-      </p>
+      <div class="profile-section-divider"></div>
 
-      <div class="rank-list rank-list-side" role="list">
+      <div class="rank-table" role="list">
         {rankingSummary.politicians.map((politician, index) => (
-          <article key={politician.id} class="rank-row rank-row-side" role="listitem">
-            <div class="rank-order">
-              <span>#{index + 1}</span>
+          <article key={politician.id} class="rank-row-sharp" role="listitem">
+            <div class="rank-order-sharp">
+              <span class="rank-number">{index + 1}</span>
             </div>
 
-            <div class="rank-identity">
-              {politician.imageUrl ? (
-                <img class="avatar-image" src={politician.imageUrl} alt="" loading="lazy" referrerPolicy="no-referrer" />
-              ) : (
-                <div class="avatar-badge" aria-hidden="true">{getInitials(politician.displayName)}</div>
-              )}
-              <div>
-                <strong>{politician.displayName}</strong>
-                <span>
+            <div class="rank-content-sharp">
+              <div class="rank-identity-sharp">
+                <strong class="history-name-sharp">{politician.displayName}</strong>
+                <span class="history-role-sharp">
                   {politician.roleLabel}
-                  {politician.partyLabel ? ` - ${politician.partyLabel}` : ""}
+                  {politician.partyLabel ? ` · ${politician.partyLabel}` : ""}
                 </span>
-                <div class="rank-score-line">
-                  <strong>{formatPercent(politician.researchInterestScore)}</strong>
-                  <span class="score-subtle">
-                    ถูกค้นคว้า {politician.researchActions.toLocaleString()} ครั้ง
+              </div>
+
+              <div class="rank-stats-sharp">
+                <div class="rank-score-block">
+                  <strong class="rank-percent">{formatPercent(politician.researchInterestScore)}</strong>
+                  <span class="rank-details">
+                    ค้นคว้า {politician.researchActions.toLocaleString()} / {politician.eligibleImpressions.toLocaleString()}
                   </span>
+                </div>
+                
+                <div class="rank-graph-sharp" aria-hidden="true">
+                  <div class="rank-progress-edge">
+                    <div 
+                      class="progress-fill" 
+                      style={{ width: `${Math.round(politician.researchInterestScore * 100)}%` }} 
+                    />
+                  </div>
                 </div>
               </div>
             </div>
 
-            <div class="rank-side-graph">
-              <div class="score-bar" aria-hidden="true">
-                <span style={{ width: `${Math.round(politician.researchInterestScore * 100)}%` }} />
-              </div>
-              <span class="score-subtle">การแสดงผล {politician.eligibleImpressions.toLocaleString()} ครั้ง</span>
-            </div>
-
-            <div class="rank-actions">
+            <div class="rank-actions-sharp">
               <a
-                class="search-bar-link"
+                class="ghost-cta sharp-cta icon-only-cta"
                 href={`https://www.google.com/search?q=${encodeURIComponent(
                   politician.searchQuery ?? politician.displayName
                 )}`}
                 target="_blank"
                 rel="noreferrer"
+                aria-label={`Search for ${politician.displayName} on Google`}
               >
-                <GoogleIcon />
-                <span class="search-bar-query">{politician.searchQuery ?? politician.displayName}</span>
-                <div class="search-bar-icon-right">
-                  <SearchIcon />
-                </div>
+                <SearchIcon />
               </a>
             </div>
           </article>
         ))}
       </div>
-    </section>
+    </div>
   );
 }
