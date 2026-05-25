@@ -2,11 +2,17 @@ import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 import { DAILY_CARD_LIMIT, MIN_RANKING_SAMPLE_SIZE, CURRENT_CONSENT_VERSION } from "../constants";
 import { assertNeutralPublicCopy, findBannedPublicCopyTerms } from "../copyGuard";
+import {
+  autoPublishDailyDeck,
+  getDailyDeckPoliticianIds,
+  publishManualDailyDeck
+} from "../dailyDeck";
 import { BackendRuleError } from "../errors";
 import { getRankingRows } from "../ranking";
 import { validateRosterEntry } from "../roster";
 import { recordSwipe, toIsoDate } from "../swipes";
 import type { BackendState, PublicFigure, SwipeAction } from "../types";
+import { getDrawerVoteRecords } from "../voteRecords";
 
 const today = new Date("2026-05-21T12:00:00.000Z");
 
@@ -112,6 +118,149 @@ describe("backend rules", () => {
     );
   });
 
+  it("lets admins publish a future deck and preserves manual order", () => {
+    const state = createState();
+    const futureDate = "2026-05-24";
+
+    publishManualDailyDeck(state, {
+      deckDate: futureDate,
+      politicianIds: ["figure-4", "figure-2", "figure-7"],
+      adminId: "admin-api",
+      now: today
+    });
+
+    assert.deepEqual(getDailyDeckPoliticianIds(state, futureDate).slice(0, 3), [
+      "figure-4",
+      "figure-2",
+      "figure-7"
+    ]);
+  });
+
+  it("auto-picks the same published deck when no deck exists for the date", () => {
+    const state = createState();
+    const deckDate = "2026-05-22";
+
+    const first = autoPublishDailyDeck(state, {
+      deckDate,
+      adminId: "public-auto",
+      now: today
+    });
+    const second = autoPublishDailyDeck(state, {
+      deckDate,
+      adminId: "public-auto",
+      now: today
+    });
+
+    assert.deepEqual(first.politicianIds, second.politicianIds);
+    assert.equal(first.politicianIds.length, DAILY_CARD_LIMIT);
+    assert.equal(state.dailyDecks.length, 1);
+  });
+
+  it("preserves issued cards when today's deck is changed", () => {
+    const state = createState();
+    const deckDate = toIsoDate(today);
+
+    publishManualDailyDeck(state, {
+      deckDate,
+      politicianIds: ["figure-1", "figure-2", "figure-3"],
+      adminId: "admin-api",
+      now: today
+    });
+    issueImpression(state, "figure-1", "issued-from-today-deck");
+
+    const result = publishManualDailyDeck(state, {
+      deckDate,
+      politicianIds: ["figure-3", "figure-2", "figure-1"],
+      adminId: "admin-api",
+      now: today
+    });
+
+    assert.equal(result.politicianIds[0], "figure-1");
+    assert.ok(result.politicianIds.includes("figure-3"));
+    assert.ok(result.politicianIds.includes("figure-2"));
+  });
+
+  it("fills manual partial decks to the daily limit", () => {
+    const state = createState();
+    const deckDate = "2026-05-24";
+
+    const result = publishManualDailyDeck(state, {
+      deckDate,
+      politicianIds: ["figure-4", "figure-2"],
+      adminId: "admin-api",
+      now: today
+    });
+
+    assert.equal(result.politicianIds.length, DAILY_CARD_LIMIT);
+    assert.deepEqual(result.politicianIds.slice(0, 2), ["figure-4", "figure-2"]);
+    assert.equal(new Set(result.politicianIds).size, DAILY_CARD_LIMIT);
+  });
+
+  it("auto-pick completes a partial locked deck without moving issued cards", () => {
+    const state = createState();
+    const deckDate = toIsoDate(today);
+
+    publishManualDailyDeck(state, {
+      deckDate,
+      politicianIds: ["figure-4", "figure-2"],
+      adminId: "admin-api",
+      now: today
+    });
+    issueImpression(state, "figure-4", "issued-card");
+
+    const result = autoPublishDailyDeck(state, {
+      deckDate,
+      adminId: "admin-api",
+      now: today
+    });
+
+    assert.equal(result.politicianIds.length, DAILY_CARD_LIMIT);
+    assert.deepEqual(result.politicianIds.slice(0, 2), ["figure-4", "figure-2"]);
+    assert.equal(new Set(result.politicianIds).size, DAILY_CARD_LIMIT);
+  });
+
+  it("manual publish adds selected people into open slots when issued cards exist", () => {
+    const state = createState();
+    const deckDate = toIsoDate(today);
+
+    autoPublishDailyDeck(state, {
+      deckDate,
+      adminId: "public-auto",
+      now: today
+    });
+    const original = getDailyDeckPoliticianIds(state, deckDate);
+    issueImpression(state, original[0]!, "issued-card");
+
+    const result = publishManualDailyDeck(state, {
+      deckDate,
+      politicianIds: ["figure-4", "figure-2"],
+      adminId: "admin-api",
+      now: today
+    });
+
+    assert.equal(result.politicianIds[0], original[0]);
+    assert.ok(result.politicianIds.includes("figure-4"));
+    assert.ok(result.politicianIds.includes("figure-2"));
+    assert.equal(result.politicianIds.length, DAILY_CARD_LIMIT);
+    assert.equal(new Set(result.politicianIds).size, DAILY_CARD_LIMIT);
+  });
+
+  it("rejects inactive rows in a scheduled deck", () => {
+    const state = createState();
+    state.politicians[1]!.status = "archived";
+
+    assert.throws(
+      () =>
+        publishManualDailyDeck(state, {
+          deckDate: "2026-05-24",
+          politicianIds: ["figure-1", "figure-2"],
+          adminId: "admin-api",
+          now: today
+        }),
+      (error) => isBackendError(error, "PoliticianNotFoundError")
+    );
+  });
+
   it("hides rankings below the configured sample threshold", () => {
     const state = createState();
     const date = toIsoDate(today);
@@ -181,6 +330,29 @@ describe("backend rules", () => {
       "leading"
     ]);
   });
+
+  it("returns only recent factual vote records for the expanded drawer", () => {
+    const state = createState();
+    state.voteRecords.push(
+      createVoteRecord("figure-1", "vote-1", "2025-01-01", "เห็นด้วย"),
+      createVoteRecord("figure-1", "vote-2", "2025-04-01", "ไม่เห็นด้วย"),
+      createVoteRecord("figure-1", "vote-3", "2025-03-01", "งดออกเสียง"),
+      createVoteRecord("figure-1", "vote-4", "2025-02-01", "ไม่ลงคะแนน"),
+      createVoteRecord("figure-2", "vote-5", "2025-05-01", "เห็นด้วย")
+    );
+
+    const records = getDrawerVoteRecords(state, "figure-1");
+
+    assert.deepEqual(records.map((record) => record.voteEventId), ["vote-2", "vote-3", "vote-4"]);
+    assert.deepEqual(Object.keys(records[0]!).sort(), [
+      "option",
+      "politicianId",
+      "sourceUrl",
+      "startDate",
+      "title",
+      "voteEventId"
+    ]);
+  });
 });
 
 function createState(options: { withConsent?: boolean } = {}): BackendState {
@@ -189,6 +361,9 @@ function createState(options: { withConsent?: boolean } = {}): BackendState {
     politicians: Array.from({ length: 12 }, (_, index) => createFigure(index + 1)),
     consents: [],
     cardImpressions: [],
+    dailyDecks: [],
+    dailyDeckCards: [],
+    voteRecords: [],
     swipeEvents: [],
     aggregates: [],
     flags: {
@@ -212,6 +387,22 @@ function createState(options: { withConsent?: boolean } = {}): BackendState {
   }
 
   return state;
+}
+
+function createVoteRecord(
+  politicianId: string,
+  voteEventId: string,
+  startDate: string,
+  option: string
+) {
+  return {
+    politicianId,
+    voteEventId,
+    title: `Public vote ${voteEventId}`,
+    startDate,
+    option,
+    sourceUrl: `https://politigraph.wevis.info/votes/${voteEventId}`
+  };
 }
 
 function issueImpression(state: BackendState, politicianId: string, impressionId: string) {

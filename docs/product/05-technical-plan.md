@@ -207,6 +207,8 @@ Suggested routes:
 - `GET /share/:id` - share landing page.
 - `GET /admin/roster` - admin roster.
 - `POST /admin/roster` - create/update roster entries.
+- `GET /admin/daily-deck` - view scheduled Daily Deck picks.
+- `POST /admin/daily-deck` - manually publish, auto-pick, or clear future Daily Deck picks.
 - `POST /admin/freeze` - toggle freeze mode.
 - `GET /privacy` - privacy notice and data rights.
 - `POST /privacy/request` - data-subject request intake.
@@ -223,6 +225,7 @@ For static hosting, `GET` routes can be client-side routes served by the static 
 - `submit-contact`
 - `submit-privacy-request`
 - `admin-roster`
+- `admin-daily-deck`
 - `admin-freeze`
 - `admin-compliance`
 

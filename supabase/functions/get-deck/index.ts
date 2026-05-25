@@ -1,4 +1,5 @@
 import { readAppConfig } from "../_shared/appConfig.ts";
+import { ensurePublishedDailyDeck, getBangkokDate } from "../_shared/dailyDeck.ts";
 import { errorResponse } from "../_shared/errors.ts";
 import { HttpError, assertMethod, jsonResponse, optionsResponse } from "../_shared/http.ts";
 import { consumeRateLimit } from "../_shared/rateLimit.ts";
@@ -19,7 +20,7 @@ Deno.serve(async (request) => {
     const dailyLimit = config.integer("daily_card_limit", DAILY_CARD_LIMIT);
     const identity = await getOrCreateVisitorIdentity(request, false);
     const visitorKeyHash = await hashVisitorId(identity.visitorId);
-    const today = new Date().toISOString().slice(0, 10);
+    const today = getBangkokDate();
     const consentVersion = config.string("consent_version", CURRENT_CONSENT_VERSION);
 
     await consumeRateLimit(supabase, visitorKeyHash, "get-deck", 120, 3600);
@@ -100,26 +101,21 @@ Deno.serve(async (request) => {
       ...(swipedEvents ?? []).map((event) => event.politician_id)
     ]);
 
-    const newCardsNeeded = Math.max(needed - (existingImpressions?.length ?? 0), 0);
-    const { data: activePoliticians, error } = await supabase
-      .from("politicians")
-      .select("id,display_name,role_label,party_label,search_query,image_url,image_source_url,info_source_url,featured_priority")
-      .eq("status", "active")
-      .order("featured_priority", { ascending: true, nullsFirst: false })
-      .order("updated_at", { ascending: false })
-      .limit(dailyLimit * 3);
-
-    if (error) {
-      throw error;
-    }
-
-    const candidates = (activePoliticians ?? []).filter((politician) => {
-      return !excludedPoliticianIds.has(politician.id);
+    const dailyDeckCards = await ensurePublishedDailyDeck(supabase, today, dailyLimit, "public-auto");
+    const deckPositionByPoliticianId = new Map(
+      dailyDeckCards.map((card) => [card.politician_id, card.position])
+    );
+    const validExistingImpressions = (existingImpressions ?? []).filter((impression) => {
+      return deckPositionByPoliticianId.has(impression.politician_id);
     });
+    const candidates = dailyDeckCards.filter((card) => {
+      return !excludedPoliticianIds.has(card.politician_id);
+    });
+    const newCardsNeeded = Math.max(needed - validExistingImpressions.length, 0);
     const newImpressions = candidates.slice(0, newCardsNeeded).map((politician) => ({
       id: crypto.randomUUID(),
       visitor_key_hash: visitorKeyHash,
-      politician_id: politician.id,
+      politician_id: politician.politician_id,
       occurred_on: today
     }));
 
@@ -151,7 +147,9 @@ Deno.serve(async (request) => {
       impressionByPoliticianId.set(impression.politician_id, impression.id);
     }
 
-    const issuedPoliticianIds = Array.from(impressionByPoliticianId.keys());
+    const issuedPoliticianIds = Array.from(impressionByPoliticianId.keys()).filter((politicianId) => {
+      return deckPositionByPoliticianId.has(politicianId);
+    });
     let deckPoliticians: any[] = [];
     if (issuedPoliticianIds.length > 0) {
       const { data: fetchedPoliticians, error: fetchError } = await supabase
@@ -165,17 +163,31 @@ Deno.serve(async (request) => {
       deckPoliticians = fetchedPoliticians ?? [];
     }
 
-    // Sort to match priority order: featured_priority asc (nulls last), then display_name or id
+    // Sort to match the shared Daily Deck order chosen for this date.
     deckPoliticians.sort((a, b) => {
-      const ap = a.featured_priority;
-      const bp = b.featured_priority;
-      if (ap !== bp) {
-        if (ap === null) return 1;
-        if (bp === null) return -1;
-        return ap - bp;
-      }
-      return b.id.localeCompare(a.id);
+      return (deckPositionByPoliticianId.get(a.id) ?? 999) - (deckPositionByPoliticianId.get(b.id) ?? 999);
     });
+
+    const voteRecordsByPoliticianId = new Map<string, any[]>();
+    if (deckPoliticians.length > 0) {
+      const { data: voteRows, error: voteError } = await supabase
+        .from("politician_vote_records")
+        .select("politician_id,vote_event_id,title,start_date,option,source_url")
+        .in("politician_id", deckPoliticians.map((politician) => politician.id))
+        .order("start_date", { ascending: false });
+
+      if (voteError) {
+        throw voteError;
+      }
+
+      for (const row of voteRows ?? []) {
+        const existing = voteRecordsByPoliticianId.get(row.politician_id) ?? [];
+        if (existing.length < 3) {
+          existing.push(row);
+          voteRecordsByPoliticianId.set(row.politician_id, existing);
+        }
+      }
+    }
 
     const cards = deckPoliticians
       .slice(0, needed)
@@ -189,6 +201,13 @@ Deno.serve(async (request) => {
         imageSourceUrl: politician.image_source_url,
         infoSourceUrl: politician.info_source_url,
         featuredPriority: politician.featured_priority,
+        voteRecords: (voteRecordsByPoliticianId.get(politician.id) ?? []).map((record) => ({
+          voteEventId: record.vote_event_id,
+          title: record.title,
+          startDate: record.start_date,
+          option: record.option,
+          sourceUrl: record.source_url
+        })),
         impressionId: impressionByPoliticianId.get(politician.id)
       }));
 

@@ -38,6 +38,9 @@ verify_jwt = false
 [functions.admin-freeze]
 verify_jwt = false
 
+[functions.admin-daily-deck]
+verify_jwt = false
+
 [functions.cleanup-retention]
 verify_jwt = false
 

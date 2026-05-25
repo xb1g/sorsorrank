@@ -24,7 +24,7 @@ Most civic products feel like homework. SorsorRank should feel like Tinder for p
 ### Must Have
 
 - Daily Deck capped at 10 cards per user/day.
-- Sparse card: name, optional role/party for disambiguation, Google Search button, Match %.
+- Sparse card: name, optional role/party for disambiguation, public-record drawer, source links, Google Search button, Match %.
 - Two card actions: `Crush` and `Pass`.
 - Public aggregate **Crush Rank**.
 - Match Card share moment after 10 swipes.
@@ -51,6 +51,7 @@ Most civic products feel like homework. SorsorRank should feel like Tinder for p
 - Voting recommendations.
 - Approval ratings or popularity labels.
 - Candidate profile pages.
+- Hosted bill-vote summaries, issue-position summaries, scores, or labels on swipe cards before counsel review. Factual recorded parliamentary rows may appear only in the expanded public-record drawer with date, title, recorded option, source link, and neutral disclaimer.
 - User comments, debate threads, quote posts, or accusations.
 - AI summaries of search results.
 - Scraping Google results.
@@ -132,6 +133,7 @@ Defaults until legal review says otherwise:
 - Public Crush Rank: disabled in private alpha.
 - Raw swipe retention: 7 days maximum.
 - Google Search clicks: client-only outbound behavior in MVP; do not store as political interaction data.
+- Card expansion may show factual roster/source metadata from Politigraph or Parliament Watch: role, party, district/list status, source links, image attribution, and recent recorded parliamentary rows limited to date, title, recorded option, and source link. It must not summarize bill voting, issue positions, scandals, campaign promises, or allegations without a separate product and legal review.
 - Battle Mode: off by default; enable only after safety review and outside election windows.
 
 Open decisions:

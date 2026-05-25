@@ -7,6 +7,7 @@ import {
 } from "./supabaseAuth";
 import type {
   ConsentState,
+  AdminDailyDeckState,
   DeckCard,
   DeckState,
   Politician,
@@ -83,6 +84,53 @@ async function callFunction<T>(
   }
 
   const response = await fetch(`${API_BASE_URL}/${functionName}`, {
+    method,
+    headers,
+    body: method === "POST" ? JSON.stringify(options.body ?? {}) : undefined
+  });
+
+  const payload = await response.json().catch(() => null);
+
+  if (!response.ok) {
+    const message =
+      payload && typeof payload === "object" && "message" in payload
+        ? String((payload as { message: unknown }).message)
+        : `Request failed with ${response.status}`;
+    throw new Error(message);
+  }
+
+  return payload as T;
+}
+
+async function callAdminFunction<T>(
+  functionName: string,
+  adminToken: string,
+  options: {
+    method?: "GET" | "POST";
+    body?: Record<string, unknown>;
+    query?: Record<string, string>;
+  } = {}
+): Promise<T> {
+  if (!backendEnabled()) {
+    throw new Error("Backend API base URL is not configured.");
+  }
+
+  const method = options.method ?? "GET";
+  const headers = new Headers();
+  const supabaseKey = getSupabasePublishableKey();
+  const params = new URLSearchParams(options.query ?? {});
+  const queryString = params.toString();
+
+  if (supabaseKey) {
+    headers.set("apikey", supabaseKey);
+  }
+
+  headers.set("Authorization", `Bearer ${adminToken}`);
+  if (method === "POST") {
+    headers.set("Content-Type", "application/json");
+  }
+
+  const response = await fetch(`${API_BASE_URL}/${functionName}${queryString ? `?${queryString}` : ""}`, {
     method,
     headers,
     body: method === "POST" ? JSON.stringify(options.body ?? {}) : undefined
@@ -235,6 +283,47 @@ export async function fetchSwipeHistory(): Promise<SwipeHistory> {
   return { date: new Date().toISOString().slice(0, 10), items: [] };
 }
 
+export async function fetchAdminDailyDeck(adminToken: string, date: string): Promise<AdminDailyDeckState> {
+  return callAdminFunction<AdminDailyDeckState>("admin-daily-deck", adminToken, {
+    query: { date }
+  });
+}
+
+export async function autoPickAdminDailyDeck(adminToken: string, date: string): Promise<AdminDailyDeckState> {
+  return callAdminFunction<AdminDailyDeckState>("admin-daily-deck", adminToken, {
+    method: "POST",
+    body: {
+      mode: "auto-pick",
+      date
+    }
+  });
+}
+
+export async function publishAdminDailyDeck(
+  adminToken: string,
+  date: string,
+  politicianIds: string[]
+): Promise<AdminDailyDeckState> {
+  return callAdminFunction<AdminDailyDeckState>("admin-daily-deck", adminToken, {
+    method: "POST",
+    body: {
+      mode: "manual",
+      date,
+      politicianIds
+    }
+  });
+}
+
+export async function clearAdminDailyDeck(adminToken: string, date: string): Promise<AdminDailyDeckState> {
+  return callAdminFunction<AdminDailyDeckState>("admin-daily-deck", adminToken, {
+    method: "POST",
+    body: {
+      mode: "clear",
+      date
+    }
+  });
+}
+
 export async function createCompletionShare() {
   if (backendEnabled()) {
     return callFunction<BackendShareResponse>("create-share", {
@@ -276,6 +365,13 @@ interface BackendDeckResponse {
     imageSourceUrl?: string;
     infoSourceUrl?: string;
     featuredPriority?: number;
+    voteRecords?: Array<{
+      voteEventId: string;
+      title: string;
+      startDate?: string;
+      option: string;
+      sourceUrl: string;
+    }>;
     impressionId: string;
   }>;
   dailyLimit: number;
@@ -349,6 +445,7 @@ function mapDeckCard(card: BackendDeckResponse["cards"][number]): DeckCard {
     imageUrl: card.imageUrl,
     imageSourceUrl: card.imageSourceUrl,
     infoSourceUrl: card.infoSourceUrl,
+    voteRecords: card.voteRecords ?? [],
     featuredPriority: card.featuredPriority,
     impressionId: card.impressionId
   };

@@ -102,6 +102,7 @@ Do not host:
 - Negative labels.
 - "Corrupt," "criminal," "dangerous," or similar tags.
 - Scraped search snippets.
+- Hosted bill-vote summaries, issue-position summaries, scores, or voting-record labels on swipe cards before counsel review.
 - Edited or humiliating images.
 - User-submitted political text.
 
@@ -109,7 +110,9 @@ Allowed:
 
 - Name.
 - Optional role/party for disambiguation.
+- Factual public-record drawer fields from reviewed sources: role, party, province/district/list status, source links, image attribution, and recent parliamentary record rows limited to date, title, recorded option, and source link.
 - Neutral Google Search link.
+- Outbound Parliament Watch or Politigraph links.
 - Aggregate Crush Rank (research interest) if not frozen and above threshold.
 - Match % if not frozen and above threshold, with "not a poll" label.
 - Methodology ("How Crush Rank works").
@@ -117,6 +120,7 @@ Allowed:
 Operational controls:
 
 - Search queries must be neutral: name plus optional role/party only.
+- Politigraph and Parliament Watch data may be used for identity/source metadata, factual recorded parliamentary rows, and outbound links. Do not turn bill votes into in-app summaries, rankings, scores, labels, issue-position claims, or recommendation copy without Thai counsel review of exact fields, source attribution, and timing.
 - Any complaint about false, defamatory, unlawful, or election-sensitive content triggers immediate hide-or-freeze pending counsel review.
 - Legal orders, ECT requests, and takedown requests must be logged with timestamp, requester, affected content, action taken, and reviewer.
 

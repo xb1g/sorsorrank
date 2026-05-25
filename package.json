@@ -11,6 +11,7 @@
     "supabase:wire": "powershell -ExecutionPolicy Bypass -File scripts/wire-supabase.ps1",
     "supabase:wire:dry": "powershell -ExecutionPolicy Bypass -File scripts/wire-supabase.ps1 -SkipLink -SkipDbPush -SkipFunctions -SkipSecrets",
     "supabase:import-members": "powershell -ExecutionPolicy Bypass -File scripts/import-members-csv.ps1",
+    "supabase:import-politigraph": "node scripts/import-politigraph-members.mjs",
     "supabase:import-featured": "powershell -ExecutionPolicy Bypass -File scripts/import-featured-politicians.ps1",
     "preview": "vite preview"
   },

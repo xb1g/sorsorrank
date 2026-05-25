@@ -1,4 +1,5 @@
 import { readAppConfig } from "../_shared/appConfig.ts";
+import { getBangkokDate } from "../_shared/dailyDeck.ts";
 import { errorResponse } from "../_shared/errors.ts";
 import { HttpError, assertMethod, jsonResponse, optionsResponse } from "../_shared/http.ts";
 import { consumeRateLimit } from "../_shared/rateLimit.ts";
@@ -19,7 +20,7 @@ Deno.serve(async (request) => {
     const dailyLimit = config.integer("daily_card_limit", DAILY_CARD_LIMIT);
     const identity = await getOrCreateVisitorIdentity(request, false);
     const visitorKeyHash = await hashVisitorId(identity.visitorId);
-    const today = new Date().toISOString().slice(0, 10);
+    const today = getBangkokDate();
 
     await consumeRateLimit(supabase, visitorKeyHash, "get-swipe-history", 60, 3600);
 
@@ -39,7 +40,7 @@ Deno.serve(async (request) => {
 
     return jsonResponse({
       date: today,
-      items: (events ?? []).map((event) => ({
+      items: (events ?? []).map((event: any) => ({
         id: event.id,
         action: event.action,
         createdAt: event.created_at,

@@ -14,6 +14,8 @@ const backendStatuses: Record<string, number> = {
   InvalidPublicCopyError: 400,
   VisitorTokenRequired: 401,
   DailyTenIncompleteError: 409,
+  DailyDeckLockedError: 409,
+  InvalidDailyDeckError: 400,
   HumanChallengeRequired: 400,
   HumanChallengeFailed: 403,
   HumanChallengeUnavailable: 503
@@ -33,6 +35,8 @@ const backendMessages: Record<string, string> = {
   InvalidPublicCopyError: "Public copy contains banned framing.",
   VisitorTokenRequired: "A server-issued visitor token is required.",
   DailyTenIncompleteError: "Complete today's 10 before creating this share.",
+  DailyDeckLockedError: "This Daily Deck can no longer be changed.",
+  InvalidDailyDeckError: "Daily Deck selection is invalid.",
   HumanChallengeRequired: "Human verification is required.",
   HumanChallengeFailed: "Human verification failed.",
   HumanChallengeUnavailable: "Human verification is not available."

@@ -51,6 +51,7 @@ Card content:
 
 - Name.
 - Optional role/party only if needed to disambiguate.
+- Expandable public-record drawer with sourced roster fields: role, party, district/list status, source links, image attribution, and recent factual parliamentary record rows.
 - Google Search button.
 - `Crush` action (swipe right / button).
 - `Pass` action (swipe left / button).
@@ -60,9 +61,11 @@ Card content:
 Interaction notes:
 
 - Tinder-style swipe gesture + tap buttons both work.
-- Google button should be obvious and available before the user decides.
-- Card should not contain claims, photos with unclear rights, bios, accusations, promises, or editorial text.
+- The expand control should feel like a Tinder-style profile peek, but content stays factual and sourced.
+- Google and Parliament Watch/Politigraph source buttons should be available before the user decides.
+- Card should not contain claims, photos with unclear rights, bios, accusations, promises, editorial text, or bill-vote summaries.
 - Search query must be neutral: name plus optional role/party only. Do not append scandal, corruption, crime, praise, attack, or campaign terms.
+- Recent parliamentary records may appear in the expanded drawer only as factual rows: date, title, recorded option, and source link. Do not summarize, score, group by issue, or label those records inside the card without counsel-approved copy and methodology.
 - Use stable layout for long names.
 - Card tilt on drag should hint at Crush (right, warm color) vs Pass (left, cool color) without using explicit red/green moral judgment.
 

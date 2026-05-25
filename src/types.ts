@@ -1,5 +1,13 @@
 export type SwipeAction = "research" | "skip";
 
+export interface VoteRecord {
+  voteEventId: string;
+  title: string;
+  startDate?: string;
+  option: string;
+  sourceUrl: string;
+}
+
 export interface Politician {
   id: string;
   displayName: string;
@@ -10,6 +18,7 @@ export interface Politician {
   imageUrl?: string;
   imageSourceUrl?: string;
   infoSourceUrl?: string;
+  voteRecords?: VoteRecord[];
   featuredPriority?: number;
   researchInterestScore: number;
   researchActions: number;
@@ -86,4 +95,37 @@ export interface SwipeHistoryItem {
 export interface SwipeHistory {
   date: string;
   items: SwipeHistoryItem[];
+}
+
+export interface AdminDailyDeckCard {
+  position: number;
+  politicianId: string;
+  displayName: string;
+  roleLabel?: string;
+  partyLabel?: string;
+  searchQuery?: string;
+  imageUrl?: string;
+  imageSourceUrl?: string;
+  infoSourceUrl?: string;
+  featuredPriority?: number;
+}
+
+export interface AdminRosterOption {
+  id: string;
+  displayName: string;
+  roleLabel?: string;
+  partyLabel?: string;
+  searchQuery: string;
+  imageUrl?: string;
+  imageSourceUrl?: string;
+  infoSourceUrl?: string;
+  featuredPriority?: number;
+  updatedAt?: string;
+}
+
+export interface AdminDailyDeckState {
+  date: string;
+  today: string;
+  cards: AdminDailyDeckCard[];
+  roster: AdminRosterOption[];
 }

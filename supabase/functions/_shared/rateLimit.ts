@@ -1,5 +1,5 @@
 export async function consumeRateLimit(
-  supabase: { rpc: (name: string, args: Record<string, unknown>) => Promise<{ error: unknown }> },
+  supabase: { rpc: (name: string, args: Record<string, unknown>) => any },
   keyHash: string,
   bucket: string,
   limit: number,

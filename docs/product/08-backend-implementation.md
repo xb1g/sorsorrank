@@ -22,6 +22,8 @@ Implemented tables:
 - `consent_records`
 - short-retention `swipe_events`
 - short-retention `card_impressions`
+- scheduled `daily_decks`
+- scheduled `daily_deck_cards`
 - `daily_research_interest_aggregates`
 - `share_events`
 - `takedown_requests`
@@ -35,11 +37,13 @@ All app tables have RLS enabled and direct `anon` / `authenticated` grants revok
 
 `get-deck` also requires the latest current-version consent decision before issuing `card_impressions`, because issued deck state links a visitor to public figures even before a swipe is stored.
 
+Daily Deck selection is shared by Thailand calendar date. Admins can use `/admin` in the static app to schedule a future deck, manually publish/reorder selected roster rows, or trigger auto-pick. If no deck exists when the first public user asks for today's deck, `get-deck` lazily auto-picks and publishes one for that Bangkok date. These operational picks are not a ranking, endorsement, or popularity signal.
+
 `record_swipe_event` is a Postgres transaction boundary. It enforces:
 
 - latest current-version consent decision is accepted
 - freeze mode and swipe flag
-- active roster entry
+- active roster entry from the shared Daily Deck for the Bangkok date
 - a server-issued, unused card impression for that visitor, day, and public figure
 - one action per idempotency key / impression
 - 10-card daily limit

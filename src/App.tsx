@@ -1,4 +1,5 @@
 import { useEffect, useState } from "preact/hooks";
+import { AdminDailyDeck } from "./components/AdminDailyDeck";
 import { ConsentGate } from "./components/ConsentGate";
 import { DailyDone } from "./components/DailyDone";
 import { LoadingScreen } from "./components/LoadingScreen";
@@ -18,7 +19,7 @@ import {
 } from "./services/api";
 import type { ConsentState, DeckCard, DeckState, RankingSummary, SwipeAction } from "./types";
 
-type AppView = "consent" | "deck" | "done" | "rankings" | "profile" | "privacy" | "terms";
+type AppView = "admin" | "consent" | "deck" | "done" | "rankings" | "profile" | "privacy" | "terms";
 
 function App() {
   const [rankingSummary, setRankingSummary] = useState<RankingSummary | null>(null);
@@ -47,7 +48,7 @@ function App() {
         setRankingSummary(rankingData);
         setDeckState(deckData);
         setConsentState(consentData);
-        setView(consentData.hasConsented ? (deckData?.doneToday ? "done" : "deck") : "consent");
+        setView(window.location.pathname === "/admin" ? "admin" : consentData.hasConsented ? (deckData?.doneToday ? "done" : "deck") : "consent");
         setStatus("ready");
       } catch (error) {
         console.error("Failed to load app state", error);
@@ -113,13 +114,12 @@ function App() {
 
   return (
     <div class="app-shell app-shell-contract">
-      {view !== "privacy" && view !== "terms" ? (
+      {view !== "privacy" && view !== "terms" && view !== "admin" ? (
         <header class="topbar">
           <div class="brand-lockup">
             <img src="/logo.svg" class="brand-logo" alt="SorsorRank Logo" />
             <div>
               <strong>SorsorRank</strong>
-              <span>อันดับความสนใจค้นคว้า</span>
             </div>
           </div>
           <nav class="topnav desktop-nav">
@@ -172,6 +172,8 @@ function App() {
           <PolicyDocument type="terms" onBack={() => setView(consentState?.hasConsented ? (deckState?.doneToday ? "done" : "deck") : "consent")} />
         ) : null}
 
+        {status === "ready" && view === "admin" ? <AdminDailyDeck /> : null}
+
         {status === "ready" && rankingSummary && consentState ? (
           <>
             {view === "deck" && deckState ? (
@@ -211,7 +213,7 @@ function App() {
         ) : null}
       </main>
 
-      {view !== "privacy" && view !== "terms" ? (
+      {view !== "privacy" && view !== "terms" && view !== "admin" ? (
         <nav class="bottom-tab-bar">
           <button
             class={`tab-item ${view === "deck" || view === "done" || view === "consent" ? "is-active" : ""}`}

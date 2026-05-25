@@ -5,6 +5,8 @@ export type BackendErrorCode =
   | "CardImpressionRequiredError"
   | "PoliticianNotFoundError"
   | "FreezeModeActiveError"
+  | "DailyDeckLockedError"
+  | "InvalidDailyDeckError"
   | "InsufficientSampleError"
   | "RateLimitExceededError"
   | "UnauthorizedAdminError"
@@ -18,6 +20,8 @@ const messages: Record<BackendErrorCode, string> = {
   CardImpressionRequiredError: "A valid issued card impression is required before recording this action.",
   PoliticianNotFoundError: "This public figure is not available in the active roster.",
   FreezeModeActiveError: "The daily pulse is paused during a sensitive review period.",
+  DailyDeckLockedError: "This Daily Deck can no longer be changed.",
+  InvalidDailyDeckError: "Daily Deck selection is invalid.",
   InsufficientSampleError: "This pulse is hidden until the minimum sample threshold is reached.",
   RateLimitExceededError: "Too many requests. Please try again later.",
   UnauthorizedAdminError: "Admin authorization is required.",

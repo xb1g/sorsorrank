@@ -1,4 +1,5 @@
 import { readAppConfig } from "../_shared/appConfig.ts";
+import { getBangkokDate } from "../_shared/dailyDeck.ts";
 import { errorResponse } from "../_shared/errors.ts";
 import { HttpError, assertMethod, jsonResponse, optionsResponse, readJsonObject } from "../_shared/http.ts";
 import { consumeRateLimit } from "../_shared/rateLimit.ts";
@@ -48,7 +49,7 @@ Deno.serve(async (request) => {
 
     if (shareType === "completion" || shareType === "streak") {
       const dailyLimit = config.integer("daily_card_limit", DAILY_CARD_LIMIT);
-      const today = new Date().toISOString().slice(0, 10);
+      const today = getBangkokDate();
       const { count, error: countError } = await supabase
         .from("swipe_events")
         .select("id", { count: "exact", head: true })

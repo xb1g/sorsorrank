@@ -1,3 +1,4 @@
+import { getBangkokDate } from "../_shared/dailyDeck.ts";
 import { errorResponse } from "../_shared/errors.ts";
 import { assertMethod, jsonResponse, optionsResponse, readJsonObject } from "../_shared/http.ts";
 import { consumeRateLimit } from "../_shared/rateLimit.ts";
@@ -33,7 +34,8 @@ Deno.serve(async (request) => {
       p_politician_id: politicianId,
       p_action: action,
       p_card_impression_id: cardImpressionId,
-      p_idempotency_key: idempotencyKey
+      p_idempotency_key: idempotencyKey,
+      p_today: getBangkokDate()
     });
 
     if (error) {

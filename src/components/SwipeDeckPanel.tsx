@@ -37,6 +37,29 @@ function getInitials(displayName: string) {
     .join("");
 }
 
+function getRecordDetails(card: DeckCard) {
+  const details = [
+    { label: "ชื่อ", value: card.displayName },
+    { label: "ตำแหน่ง", value: card.roleLabel },
+    { label: "พรรค", value: card.partyLabel },
+    { label: "คำค้นกลาง", value: card.searchQuery }
+  ];
+
+  return details.filter((detail) => Boolean(detail.value));
+}
+
+function formatRecordDate(value: string | undefined) {
+  if (!value) {
+    return "";
+  }
+
+  return new Intl.DateTimeFormat("th-TH", {
+    day: "numeric",
+    month: "short",
+    year: "numeric"
+  }).format(new Date(`${value}T00:00:00+07:00`));
+}
+
 export function SwipeDeckPanel({
   deckState,
   onSwipe,
@@ -129,7 +152,7 @@ export function SwipeDeckPanel({
         <section class="panel state-panel">
           <p class="panel-label">10 ใบประจำวัน</p>
           <h2>สำรวจครบทั้งหมดแล้ว</h2>
-          <p>คุณได้สำรวจนักการเมืองที่มีในระบบ ณ ขณะนี้ทั้งหมดแล้ว! ขอบคุณที่ร่วมวิจัยประชาธิปไตยกับเรา คุณสามารถติดตามอันดับความสนใจหรือกลับมาใหม่ในวันพรุ่งนี้</p>
+          <p style={{ maxWidth: "60ch", marginInline: "auto" }}>คุณได้สำรวจนักการเมืองที่มีในระบบ ณ ขณะนี้ทั้งหมดแล้ว! ขอบคุณที่ร่วมวิจัยประชาธิปไตยกับเรา คุณสามารถติดตามอันดับความสนใจหรือกลับมาใหม่ในวันพรุ่งนี้</p>
           <button class="btn btn-primary" type="button" onClick={onComplete} style={{ marginTop: "24px" }}>
             ดูผลสรุปวันนี้
           </button>
@@ -299,19 +322,21 @@ export function SwipeDeckPanel({
                   </div>
                 </a>
                 
-                <a
-                  class="search-bar-link"
-                  href={`https://www.google.com/search?q=${encodeURIComponent(activeCard.displayName + " site:parliamentwatch.wevis.info")}`}
-                  target="_blank"
-                  rel="noreferrer"
-                  onPointerDown={(e) => e.stopPropagation()}
-                >
-                  <ParliamentWatchIcon />
-                  <span class="search-bar-query" style={{ fontSize: "14px" }}>ดูประวัติการโหวตบน WeVis</span>
-                  <div class="search-bar-icon-right">
-                    <SearchIcon />
-                  </div>
-                </a>
+                {activeCard.infoSourceUrl ? (
+                  <a
+                    class="search-bar-link"
+                    href={activeCard.infoSourceUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                    onPointerDown={(e) => e.stopPropagation()}
+                  >
+                    <ParliamentWatchIcon />
+                    <span class="search-bar-query" style={{ fontSize: "14px" }}>ดูข้อมูลสาธารณะบน Parliament Watch</span>
+                    <div class="search-bar-icon-right">
+                      <SearchIcon />
+                    </div>
+                  </a>
+                ) : null}
               </div>
 
               <div class="action-row">
@@ -346,63 +371,59 @@ export function SwipeDeckPanel({
               onPointerDown={(e) => e.stopPropagation()}
             >
               <div class="drawer-header">
-                <h4>สำรวจข้อมูล</h4>
+                <h4>ข้อมูลสาธารณะ</h4>
                 <button class="icon-btn" onClick={() => setIsExpanded(false)}><CloseIcon /></button>
               </div>
-              
-              <a
-                class="search-bar-link"
-                href={`https://www.google.com/search?q=${encodeURIComponent(activeCard.searchQuery)}`}
-                target="_blank"
-                rel="noreferrer"
-              >
-                <GoogleIcon />
-                <span class="search-bar-query">{activeCard.searchQuery}</span>
-                <div class="search-bar-icon-right">
-                  <SearchIcon />
-                </div>
-              </a>
 
-              <div class="search-chips">
-                <a
-                  class="search-chip"
-                  href={`https://www.google.com/search?q=${encodeURIComponent(activeCard.searchQuery + " ประวัติ")}`}
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  <SearchIcon /> ประวัติ
-                </a>
-                <a
-                  class="search-chip"
-                  href={`https://www.google.com/search?q=${encodeURIComponent(activeCard.searchQuery + " ข่าวล่าสุด")}`}
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  <SearchIcon /> ข่าวล่าสุด
-                </a>
-                <a
-                  class="search-chip"
-                  href={`https://www.google.com/search?q=${encodeURIComponent(activeCard.searchQuery + " นโยบาย")}`}
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  <SearchIcon /> นโยบาย
-                </a>
-                <a
-                  class="search-chip"
-                  href={`https://www.google.com/search?q=${encodeURIComponent(activeCard.searchQuery + " การอภิปราย")}`}
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  <SearchIcon /> การอภิปราย
-                </a>
-                <a
-                  class="search-chip"
-                  href={`https://www.google.com/search?q=${encodeURIComponent("site:parliamentwatch.wevis.info " + activeCard.searchQuery)}`}
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  <SearchIcon /> WeVis ข้อมูลสภา
+              <div class="public-record-grid">
+                {getRecordDetails(activeCard).map((detail) => (
+                  <div class="public-record-row" key={detail.label}>
+                    <span>{detail.label}</span>
+                    <strong>{detail.value}</strong>
+                  </div>
+                ))}
+              </div>
+
+              <p class="drawer-note">ข้อมูลนี้มาจากชุดข้อมูลสาธารณะสำหรับระบุตัวบุคคล ไม่ใช่การแนะนำหรือจัดอันดับทางการเมือง</p>
+
+              {activeCard.voteRecords?.length ? (
+                <div class="vote-record-list">
+                  <div class="vote-record-heading">บันทึกสภาล่าสุด</div>
+                  {activeCard.voteRecords.map((record) => (
+                    <a
+                      class="vote-record-item"
+                      href={record.sourceUrl}
+                      target="_blank"
+                      rel="noreferrer"
+                      key={record.voteEventId}
+                    >
+                      <span class="vote-record-meta">
+                        {formatRecordDate(record.startDate) || "ไม่ระบุวันที่"}
+                      </span>
+                      <strong>{record.title}</strong>
+                      <span>บันทึกไว้ว่า: {record.option}</span>
+                    </a>
+                  ))}
+                  <p class="drawer-note">แสดงตามบันทึกสาธารณะ ไม่ใช่การตีความหรือคำแนะนำ</p>
+                </div>
+              ) : null}
+
+              <div class="source-link-list">
+                {activeCard.infoSourceUrl ? (
+                  <a class="source-link" href={activeCard.infoSourceUrl} target="_blank" rel="noreferrer">
+                    <ParliamentWatchIcon />
+                    <span>Parliament Watch</span>
+                  </a>
+                ) : null}
+                {activeCard.imageSourceUrl ? (
+                  <a class="source-link" href={activeCard.imageSourceUrl} target="_blank" rel="noreferrer">
+                    <SearchIcon />
+                    <span>ที่มารูปภาพ</span>
+                  </a>
+                ) : null}
+                <a class="source-link" href={`https://www.google.com/search?q=${encodeURIComponent(activeCard.searchQuery)}`} target="_blank" rel="noreferrer">
+                  <GoogleIcon />
+                  <span>ค้นเพิ่มบน Google</span>
                 </a>
               </div>
             </div>

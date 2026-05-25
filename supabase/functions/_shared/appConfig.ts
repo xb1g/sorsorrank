@@ -1,7 +1,5 @@
 type SupabaseLike = {
-  from: (table: string) => {
-    select: (columns: string) => Promise<{ data: Array<{ key: string; value: unknown }> | null; error: unknown }>;
-  };
+  from: (table: string) => any;
 };
 
 export async function readAppConfig(supabase: SupabaseLike) {

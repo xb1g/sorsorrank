@@ -40,12 +40,41 @@ export interface CardImpression {
   consumedAt?: string;
 }
 
+export type DailyDeckStatus = "published";
+export type DailyDeckSelectionMode = "manual" | "auto_pick";
+
+export interface DailyDeck {
+  deckDate: string;
+  status: DailyDeckStatus;
+  selectionMode: DailyDeckSelectionMode;
+  dailyLimit: number;
+  generatedAt: string;
+  publishedAt: string;
+  createdBy: string;
+  updatedBy: string;
+}
+
+export interface DailyDeckCard {
+  deckDate: string;
+  position: number;
+  politicianId: string;
+}
+
 export interface DailyAggregate {
   date: string;
   politicianId: string;
   eligibleImpressions: number;
   researchActions: number;
   skipActions: number;
+}
+
+export interface PoliticianVoteRecord {
+  politicianId: string;
+  voteEventId: string;
+  title: string;
+  startDate?: string;
+  option: string;
+  sourceUrl: string;
 }
 
 export interface FeatureFlags {
@@ -60,6 +89,9 @@ export interface BackendState {
   politicians: PublicFigure[];
   consents: ConsentRecord[];
   cardImpressions: CardImpression[];
+  dailyDecks: DailyDeck[];
+  dailyDeckCards: DailyDeckCard[];
+  voteRecords: PoliticianVoteRecord[];
   swipeEvents: SwipeEvent[];
   aggregates: DailyAggregate[];
   flags: FeatureFlags;

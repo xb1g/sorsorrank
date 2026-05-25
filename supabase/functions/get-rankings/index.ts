@@ -1,4 +1,5 @@
 import { readAppConfig } from "../_shared/appConfig.ts";
+import { getBangkokDate } from "../_shared/dailyDeck.ts";
 import { errorResponse } from "../_shared/errors.ts";
 import { assertMethod, jsonResponse, optionsResponse } from "../_shared/http.ts";
 import { createSupabaseAdmin } from "../_shared/supabaseAdmin.ts";
@@ -15,7 +16,7 @@ Deno.serve(async (request) => {
     const supabase = createSupabaseAdmin();
     const config = await readAppConfig(supabase);
     const threshold = config.integer("minimum_ranking_sample_size", MIN_RANKING_SAMPLE_SIZE);
-    const today = new URL(request.url).searchParams.get("date") ?? new Date().toISOString().slice(0, 10);
+    const today = new URL(request.url).searchParams.get("date") ?? getBangkokDate();
 
     if (config.boolean("election_freeze", false) || !config.boolean("rankings_public", false)) {
       return jsonResponse({

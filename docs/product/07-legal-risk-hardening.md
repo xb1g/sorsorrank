@@ -50,7 +50,9 @@ Hosted political claims, summaries, snippets, comments, or accusations would mat
 
 Hardening:
 
-- Cards stay sparse: name, optional role/party, neutral Google link, Crush, Pass.
+- Cards stay sparse: name, optional role/party, factual public-record drawer, neutral source links, Google link, Crush, Pass.
+- Public-record drawer is limited to reviewed identity/source metadata: role, party, province/district/list status, source links, image attribution, and recent factual parliamentary rows.
+- Bill-vote records may be shown only as date, title, recorded option, and source link. They must not be summarized, scored, labeled, grouped by issue, or framed as advice before counsel review.
 - No bios, allegations, search snippets, AI summaries, comments, labels, edited images, romantic/sexual descriptors, or user-submitted political text.
 - Search query is neutral: name plus optional role/party only.
 - Complaint about illegality, defamation, election influence, or monarchy/royal-institution content hides/freezes affected content pending counsel review.
